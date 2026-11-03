@@ -1,0 +1,25 @@
+# ============================================================
+# LOCAL dev / offline-tooling stack ONLY.
+# The deployed public demo needs none of this: it uses the free
+# hosts directly (Vercel + Render + MongoDB Atlas M0).
+# `docker compose up` gives you a local Mongo for development.
+# ============================================================
+services:
+  mongo:
+    image: mongo:7
+    container_name: ai-interviewer-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: ai_interviewer
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mongo-data:
