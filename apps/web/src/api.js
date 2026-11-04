@@ -213,3 +213,49 @@ export async function interviewTurnStream(sessionToken, text, { onChunk, signal 
     if (signal) signal.removeEventListener('abort', forwardAbort);
   }
 }
+
+/* --- Milestone 10: report, sharing, JIT ---------------------------------- */
+
+export function generateReport(sessionToken) {
+  return request('/api/report/generate', {
+    method: 'POST',
+    body: { sessionToken },
+    timeoutMs: 120000,
+  });
+}
+
+export function fetchReport(sessionToken) {
+  return request(`/api/report?sessionToken=${encodeURIComponent(sessionToken)}`, { timeoutMs: 15000 });
+}
+
+export function fetchSharedReport(shareToken) {
+  return request(`/api/report/share/${encodeURIComponent(shareToken)}`, { timeoutMs: 15000 });
+}
+
+export function revokeShare(shareToken) {
+  return request(`/api/report/share/${encodeURIComponent(shareToken)}`, { method: 'DELETE', timeoutMs: 15000 });
+}
+
+export function fetchRecordedDemo() {
+  return request('/api/report/demo', { timeoutMs: 15000 });
+}
+
+export function llmStatus() {
+  return request('/api/llm/status', { timeoutMs: 8000 });
+}
+
+export function requestJitProblem(sessionToken, topic, difficulty = 'easy') {
+  return request('/api/problems/jit', {
+    method: 'POST',
+    body: { sessionToken, topic, difficulty },
+    timeoutMs: 120000,
+  });
+}
+
+export function submitJitValidation(sessionToken, jitId, receipt) {
+  return request('/api/problems/jit/validate', {
+    method: 'POST',
+    body: { sessionToken, jitId, receipt },
+    timeoutMs: 30000,
+  });
+}

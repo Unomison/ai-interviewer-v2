@@ -279,7 +279,8 @@ Per spec Section 13. M1 done (see `MILESTONE1_REPORT.md`); M2 done (see
 `MILESTONE2_REPORT.md`); M3 done (see `MILESTONE3_REPORT.md`); M4 done (see
 `MILESTONE4_REPORT.md`); M5 done (see `MILESTONE5_REPORT.md`); M6 done (see
 `MILESTONE6_REPORT.md`); M7 done (see `MILESTONE7_REPORT.md`); M8 done (see
-`MILESTONE8_REPORT.md`); M9 done (see `MILESTONE9_REPORT.md`). Next: M10 — report, sharing, JIT problems.
+`MILESTONE8_REPORT.md`); M9 done (see `MILESTONE9_REPORT.md`); M10 done (see
+`MILESTONE10_REPORT.md`). Next: M11 — RAG upgrade + measurement.
 
 ## Problem bank (Milestone 6, spec §4.9)
 
@@ -356,6 +357,39 @@ in the transcript as text (report-ready for M10).
 The true mic/browser E2E can't run on a build machine — a 5-step manual
 script is in `MILESTONE9_REPORT.md`. Full report: `MILESTONE9_REPORT.md`;
 decisions: `docs/decisions/010-voice-interview.md`.
+
+## Final report, sharing & JIT problems (Milestone 10, spec §4.9–4.10, §5–6)
+
+`POST /api/report/generate {sessionToken}` (finished interviews only) → one
+`report` gateway call over the transcript, round notes, DSA results and ATS
+recap. The LLM scores only the judgement dimensions (optimisation,
+communication, resume depth); problem_solving and code_correctness are
+computed deterministically from executed results. Every claim's evidence
+quotes are verified verbatim against the transcript — unverifiable claims
+are flagged `inference`, empty dimensions become "insufficient data" (spec
+§4.10). Weights 30/30/15/15/10; hint penalties deterministic. Includes the
+"automated estimate, not ground truth" disclaimer.
+
+Sharing: unguessable 128-bit token links (`GET /api/report/share/:token`,
+no session id in the URL), 30-day TTL, `DELETE` revokes (410 vs 404
+distinguished honestly). Frontend: report view (scores, evidence quotes,
+DSA table, study plan, timeline, ATS recap), share box with copy/revoke,
+and a print stylesheet — print to PDF from the browser, no server-side PDF
+on the free tier. `GET /api/report/demo` serves a fully static recorded
+demo (zero LLM calls); `GET /api/llm/status` lets the frontend offer it
+when quota is exhausted.
+
+JIT problems (spec §4.9): `POST /api/problems/jit {sessionToken, topic,
+difficulty}` — bank-covered topics return the bank problem (no LLM burned);
+uncovered topics go to the `problem_gen` gateway, then the **visitor's
+browser** validates the draft in the real in-browser runners
+(`apps/web/src/runner/jitValidate.js`: reference must pass all tests,
+wrong must fail ≥1) and posts a receipt to `POST /api/problems/jit/validate`.
+The server never executes generated code; time limits derive from measured
+reference runtime × 5. Any failure → honest fallback to the closest bank
+problem. Validated JIT problems are session-scoped only; every attempt is
+logged to `wanted_problems` for the next offline run. Full report:
+`MILESTONE10_REPORT.md`; decisions: `docs/decisions/011-report-sharing-jit.md`.
 
 ## Security / privacy notes (M1)
 

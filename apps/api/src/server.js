@@ -22,6 +22,8 @@ import problemsRouter from './routes/problems.js';
 import researchRouter from './routes/research.js';
 import interviewRouter from './routes/interview.js';
 import voiceRouter from './routes/voice.js';
+import reportRouter from './routes/report.js';
+import llmRouter from './routes/llm.js';
 
 dotenv.config();
 
@@ -58,6 +60,8 @@ app.use('/api', problemsRouter);
 app.use('/api', researchRouter);
 app.use('/api', interviewRouter);
 app.use('/api', voiceRouter);
+app.use('/api', reportRouter);
+app.use('/api', llmRouter);
 
 // IntakeError (friendly 4xx) → JSON before the generic 404.
 app.use('/api', intakeErrorHandler);

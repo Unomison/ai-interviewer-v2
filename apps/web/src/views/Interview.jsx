@@ -6,6 +6,7 @@ import {
   getInterviewState,
   submitApproach,
   submitDsaResult,
+  llmStatus,
 } from '../api.js';
 import { useVoiceInterview } from '../voice/useVoiceInterview.js';
 import { MicButton, MicNote, VoiceToggles } from '../voice/VoiceControls.jsx';
@@ -34,9 +35,10 @@ function starterFor(problem, language) {
   return problem?.starter?.[language] || '';
 }
 
-export default function Interview({ onBack }) {
+export default function Interview({ onBack, onShowReport, onShowDemo }) {
   const [phase, setPhase] = useState('starting'); // starting | active | error
   const [error, setError] = useState('');
+  const [quotaExhausted, setQuotaExhausted] = useState(false); // M10: offer recorded demo
   const [sessionToken, setSessionToken] = useState(null);
   const [istate, setIstate] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -64,6 +66,7 @@ export default function Interview({ onBack }) {
   const activeSlugRef = useRef(null);
   const idRef = useRef(0);
   const nextId = () => `m-${(idRef.current += 1)}`;
+  const completedTokenRef = useRef(null); // M10: kept after done so the report can be opened
 
   // Refs so the voice hook's stable callbacks always see fresh values.
   const sessionTokenRef = useRef(null);
@@ -117,6 +120,7 @@ export default function Interview({ onBack }) {
           const { state } = await getInterviewState(existing);
           if (cancelled) return;
           setSessionToken(existing);
+          if (state && state.done) completedTokenRef.current = existing;
           applyState(state);
           setPhase('active');
           return;
@@ -169,6 +173,23 @@ export default function Interview({ onBack }) {
   }, [messages]);
 
   /**
+   * Milestone 10 — when the interviewer is unavailable, check whether the
+   * LLM budget is exhausted; if so, offer the recorded demo instead of a
+   * dead end (spec §6).
+   */
+  const maybeOfferDemo = async (err) => {
+    if (!err || err.code !== 'interviewer_unavailable') return;
+    try {
+      const status = await llmStatus();
+      if (status?.tasks?.interviewer && status.tasks.interviewer.allowed === false) {
+        setQuotaExhausted(true);
+      }
+    } catch {
+      /* status check failed — stay silent, the error message stands */
+    }
+  };
+
+  /**
    * Unified turn sender (Milestone 9): streams the interviewer reply via SSE,
    * displays it progressively, and speaks it sentence-by-sentence as it
    * arrives (spec §4.7). Falls back to the non-streaming endpoint when the
@@ -206,6 +227,7 @@ export default function Interview({ onBack }) {
       if (state) {
         applyState(state);
         if (state.done) {
+          completedTokenRef.current = sessionTokenRef.current;
           localStorage.removeItem(INTERVIEW_TOKEN_KEY);
           sessionTokenRef.current = null;
           setSessionToken(null);
@@ -244,6 +266,7 @@ export default function Interview({ onBack }) {
           }
           finishWith(next, data.state);
         } catch (e2) {
+          maybeOfferDemo(e2);
           finishWith(
             [
               {
@@ -258,6 +281,7 @@ export default function Interview({ onBack }) {
       } else {
         // Mid-stream failure: the candidate turn is already stored
         // server-side — do NOT auto-retry (that would duplicate it).
+        maybeOfferDemo(e);
         finishWith(
           [
             {
@@ -397,6 +421,22 @@ export default function Interview({ onBack }) {
       </header>
 
       <main className="mx-auto max-w-4xl px-4 pb-40 pt-6">
+        {quotaExhausted && (
+          <div className="mb-4 rounded-2xl border border-amber-200 bg-amber-50 p-4" role="status">
+            <p className="text-sm font-semibold text-amber-900">⏳ The AI interviewer is out of quota right now</p>
+            <p className="mt-1 text-sm text-amber-800">
+              Free-tier LLM limits reset daily. Meanwhile, you can watch a fully pre-recorded demo interview — no AI calls needed.
+            </p>
+            {onShowDemo && (
+              <button
+                onClick={onShowDemo}
+                className="mt-2 rounded-xl bg-amber-600 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-700"
+              >
+                🎬 Watch the recorded demo
+              </button>
+            )}
+          </div>
+        )}
         {voice.prefs.transcriptVisible ? (
           <div className="space-y-4">
             {messages.map((m) => (
@@ -438,8 +478,20 @@ export default function Interview({ onBack }) {
           <div className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-6 text-center">
             <p className="text-lg font-bold text-emerald-900">🎉 Interview complete</p>
             <p className="mt-1 text-sm text-emerald-700">
-              Your full transcript and per-round results are saved. The detailed report arrives in Milestone 10.
+              Your full transcript and per-round results are saved.
             </p>
+            {completedTokenRef.current && onShowReport ? (
+              <button
+                onClick={() => onShowReport(completedTokenRef.current)}
+                className="mt-3 rounded-xl bg-emerald-600 px-6 py-2.5 text-sm font-semibold text-white shadow hover:bg-emerald-700"
+              >
+                View my report →
+              </button>
+            ) : (
+              <p className="mt-2 text-xs text-emerald-600">
+                Reopen this interview to generate the detailed report.
+              </p>
+            )}
           </div>
         ) : (
           istate?.currentRound === 'dsa' &&

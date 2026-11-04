@@ -6,3 +6,29 @@
 body {
   font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 }
+
+/* Milestone 10 — print stylesheet for the report view ("Print / save as PDF").
+ * Browser printing only; no server-side PDF generation on the free tier
+ * (ADR 011). Most chrome is already hidden with Tailwind's print: variant;
+ * these rules handle page-level concerns. */
+@media print {
+  @page {
+    margin: 14mm;
+  }
+  html, body {
+    background: #fff !important;
+  }
+  /* Never split these blocks across pages. */
+  blockquote, table, li {
+    break-inside: avoid;
+  }
+  h1, h2, h3 {
+    break-after: avoid;
+  }
+  /* Links show their destination in print. */
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #64748b;
+  }
+}

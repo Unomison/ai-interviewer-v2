@@ -3,6 +3,8 @@ import { pingHealth, apiBase } from './api.js';
 import SampleReport from './views/SampleReport.jsx';
 import IntakeFlow from './views/IntakeFlow.jsx';
 import Interview from './views/Interview.jsx';
+import Report from './views/Report.jsx';
+import RecordedDemo from './views/RecordedDemo.jsx';
 import Playground from './runner/components/Playground.jsx';
 
 /**
@@ -41,7 +43,33 @@ function BackendStatus({ health, error }) {
 export default function App() {
   const [health, setHealth] = useState(null);
   const [status, setStatus] = useState('checking'); // 'checking' | 'online' | 'waking'
-  const [choice, setChoice] = useState(null); // null | 'sample' | 'own' | 'playground' | 'interview'
+  const [choice, setChoice] = useState(null); // null | 'sample' | 'own' | 'playground' | 'interview' | 'report' | 'demo' | 'shared'
+  const [reportSessionToken, setReportSessionToken] = useState(null);
+  const [sharedToken, setSharedToken] = useState(null);
+
+  // Shareable report links: #/shared/<token> — works on static hosting,
+  // no login, no session id in the URL (spec §5).
+  useEffect(() => {
+    const fromHash = () => {
+      const m = window.location.hash.match(/^#\/shared\/([a-f0-9]{32,})$/i);
+      if (m) {
+        setSharedToken(m[1]);
+        setChoice('shared');
+      }
+    };
+    fromHash();
+    window.addEventListener('hashchange', fromHash);
+    return () => window.removeEventListener('hashchange', fromHash);
+  }, []);
+
+  const goHome = () => {
+    setChoice(null);
+    setReportSessionToken(null);
+    setSharedToken(null);
+    if (window.location.hash.startsWith('#/shared/')) {
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -70,16 +98,34 @@ export default function App() {
   }, []);
 
   if (choice === 'sample') {
-    return <SampleReport onBack={() => setChoice(null)} />;
+    return <SampleReport onBack={goHome} />;
   }
   if (choice === 'own') {
-    return <IntakeFlow onBack={() => setChoice(null)} onStartInterview={() => setChoice('interview')} />;
+    return <IntakeFlow onBack={goHome} onStartInterview={() => setChoice('interview')} />;
   }
   if (choice === 'interview') {
-    return <Interview onBack={() => setChoice(null)} />;
+    return (
+      <Interview
+        onBack={goHome}
+        onShowReport={(sessionToken) => {
+          setReportSessionToken(sessionToken);
+          setChoice('report');
+        }}
+        onShowDemo={() => setChoice('demo')}
+      />
+    );
+  }
+  if (choice === 'report' && reportSessionToken) {
+    return <Report sessionToken={reportSessionToken} onBack={() => setChoice('interview')} />;
+  }
+  if (choice === 'demo') {
+    return <RecordedDemo onBack={goHome} />;
+  }
+  if (choice === 'shared' && sharedToken) {
+    return <Report shareToken={sharedToken} onBack={goHome} />;
   }
   if (choice === 'playground') {
-    return <Playground onBack={() => setChoice(null)} />;
+    return <Playground onBack={goHome} />;
   }
 
   return (
@@ -123,6 +169,11 @@ export default function App() {
         <p className="mt-2 text-xs">
           <button onClick={() => setChoice('playground')} className="font-medium text-indigo-600 hover:text-indigo-800">
             Here for the coding round? Try the code playground →
+          </button>
+        </p>
+        <p className="mt-1 text-xs">
+          <button onClick={() => setChoice('demo')} className="font-medium text-slate-500 hover:text-slate-700">
+            Or watch a recorded demo interview →
           </button>
         </p>
 
