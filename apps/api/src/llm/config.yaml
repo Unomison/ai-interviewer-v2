@@ -47,7 +47,7 @@ providers:
     keyEnv: GEMINI_API_KEY
     # Override for tests: GEMINI_BASE_URL (default below).
     baseUrl: "https://generativelanguage.googleapis.com"
-    model: "gemini-2.0-flash"          # free tier: ~1,500 req/day, 15 rpm (verified 2026-11-03)
+    model: "gemini-3.8-flash"          # gemini-2.0-flash retired by Google (seen live 2026-11-04: 404 "no longer available"); 3.8-flash is Google's recommended replacement
     embeddingModel: "gemini-embedding-001"  # text-embedding-004 was retired 2026-06; verified 2026-11-03
     embeddingDimensions: 768
     supportsStreaming: true
