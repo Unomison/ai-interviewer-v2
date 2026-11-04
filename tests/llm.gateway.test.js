@@ -342,6 +342,30 @@ describe('gemini adapter: responseSchema sanitization (2026-11-04 live bug)', ()
     assert.equal(rs.type, 'object');
     assert.deepEqual(rs.required, ['skills']);
   });
+
+  test('nullable union types convert to OpenAPI nullable form', async () => {
+    const { geminiAdapter } = await import('../apps/api/src/llm/adapters/gemini.js');
+    let captured = null;
+    const fakeFetch = async (_url, opts) => {
+      captured = JSON.parse(opts.body);
+      return { ok: true, json: async () => ({ candidates: [{ content: { parts: [{ text: '{}' }] } }], usageMetadata: {} }) };
+    };
+    const schema = {
+      type: 'object',
+      properties: {
+        name: { type: ['string', 'null'] },
+        count: { type: ['integer', 'null'] },
+      },
+      required: ['name'],
+    };
+    await geminiAdapter.generate({ prompt: 'x', jsonSchema: schema, model: 'm', timeoutMs: 5000, env: { GEMINI_API_KEY: 'k' }, fetchImpl: fakeFetch });
+    const rs = captured.generationConfig.responseSchema;
+    assert.equal(rs.properties.name.type, 'string');
+    assert.equal(rs.properties.name.nullable, true);
+    assert.equal(rs.properties.count.type, 'integer');
+    assert.equal(rs.properties.count.nullable, true);
+    assert.ok(!JSON.stringify(rs).includes('"null"'), 'no null union types may remain');
+  });
 });
 
 describe('M2 gateway — per-task Groq model resolution (config.yaml)', () => {

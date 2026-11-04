@@ -90,6 +90,14 @@ function sanitizeSchemaForGemini(schema) {
       if (k === 'additionalProperties' || k === '$schema') continue;
       out[k] = sanitizeSchemaForGemini(v);
     }
+    // zod-to-json-schema emits nullable as type: ["string", "null"] (JSON
+    // Schema unions). Gemini's OpenAPI 3.0 subset rejects union types;
+    // convert to the OpenAPI 3.0 nullable form it understands.
+    if (Array.isArray(out.type) && out.type.includes('null')) {
+      const nonNull = out.type.filter((t) => t !== 'null');
+      out.type = nonNull.length === 1 ? nonNull[0] : nonNull;
+      out.nullable = true;
+    }
     return out;
   }
   return schema;
