@@ -278,7 +278,8 @@ and Pyodide are unaffected. Toolchain evaluation and decisions:
 Per spec Section 13. M1 done (see `MILESTONE1_REPORT.md`); M2 done (see
 `MILESTONE2_REPORT.md`); M3 done (see `MILESTONE3_REPORT.md`); M4 done (see
 `MILESTONE4_REPORT.md`); M5 done (see `MILESTONE5_REPORT.md`); M6 done (see
-`MILESTONE6_REPORT.md`). Next: M7 — interview orchestration.
+`MILESTONE6_REPORT.md`); M7 done (see `MILESTONE7_REPORT.md`). Next: M8 —
+interview engine (text).
 
 ## Problem bank (Milestone 6, spec §4.9)
 
@@ -286,6 +287,23 @@ Per spec Section 13. M1 done (see `MILESTONE1_REPORT.md`); M2 done (see
 solution in real JS/Python/C++ runtimes (`node tools/problem-pipeline/run.js`).
 Bank v1.0.0. Seed into Mongo: `MONGODB_URI=... node tools/seed-problems.js`.
 API: `GET /api/problems`. Full report: `MILESTONE6_REPORT.md`.
+
+## Research crawler (Milestone 7, spec §4.3)
+
+On-demand company/role research that runs **on the server** (Render free
+tier — no headless browser, plain HTTP only): `POST /api/research`
+`{company, role}` → `{kb, source: 'cache'|'fresh'|'partial'|'failed'}`.
+60s time-box with graceful partials; results cached in MongoDB (30-day TTL,
+keyed `company|role`); KB JSON shaped for the M8 planner (overview, tech
+stack, practices, culture, recent developments, interview angles — every
+item keeps its source URL). URL discovery is keyless: deterministic
+official-domain guessing + LLM-suggested URLs (verified by fetch);
+DuckDuckGo's keyless endpoint is best-effort only (measured blocked from
+datacenter IPs). Summarization uses the M2 gateway `research` task and
+refuses mock output — without keys the route returns extracted pages only.
+Pre-crawl seeding: `MONGODB_URI=... GEMINI_API_KEY=... node
+tools/seed-research.js --companies "Nokia,Google" [--role "..."]`.
+Full report: `MILESTONE7_REPORT.md`; decisions: `docs/decisions/008-research-crawler.md`.
 
 ## Security / privacy notes (M1)
 

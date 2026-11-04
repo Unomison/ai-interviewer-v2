@@ -116,7 +116,9 @@ async function main() {
   }
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+// Windows-safe "run as script" check: import.meta.url is file:///C:/... while
+// process.argv[1] is C:\... — compare via fileURLToPath + resolve.
+if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
   main().catch((err) => {
     console.error('[seed] fatal:', err.message);
     process.exit(1);

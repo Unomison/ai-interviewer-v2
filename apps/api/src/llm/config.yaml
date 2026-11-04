@@ -33,6 +33,10 @@ tasks:
     chain: [gemini, groq, openrouter]
     # Problem authoring wants the strongest reasoning available; quality
     # matters more than latency here (offline pipeline, M6).
+  research:
+    chain: [gemini, groq, openrouter]
+    # KB summarization (M7): one structured call per research run; quality
+    # matters (planner consumes it), latency is hidden behind the 60s box.
   embed:
     chain: [gemini]
     # One hosted embedding model everywhere (spec Section 4.9).
