@@ -58,17 +58,23 @@ providers:
   groq:
     keyEnv: GROQ_API_KEY
     baseUrl: "https://api.groq.com/openai/v1"   # OpenAI-compatible
-    # Strongest free model for judgement-heavy tasks; 8b-instant for volume.
-    # Free tier (verified 2026-11-03): 70b = 1,000 req/day + 100K tokens/day;
-    # 8b-instant = 14,400 req/day + 500K tokens/day.
-    model: "llama-3.3-70b-versatile"
-    fastModel: "llama-3.1-8b-instant"
+    # 2026-08-16: Groq removed llama-3.3-70b-versatile AND llama-3.1-8b-instant
+    # from free/Developer tiers (now enterprise-only; 404 model_not_found seen
+    # live 2026-11-04). Groq's official replacements are the GPT-OSS family,
+    # verified against Groq docs 2026-11-04. JSON mode (response_format
+    # json_object) is supported via the OpenAI-compatible endpoint.
+    # NOTE: there is deliberately no `fastModel` key — resolveModel() only
+    # reads taskModels[task] || model, so every override is explicit below.
+    model: "openai/gpt-oss-120b"          # strong model for judgement tasks
     supportsStreaming: true
     limits:
-      requestsPerDay: 900
+      requestsPerDay: 900                # gpt-oss-120b dev plan: 1K RPD, 200K TPD
       tokensPerDay: 90000
     taskModels:
-      interviewer: "llama-3.1-8b-instant"   # high-volume turns on the cheap model
+      # High-volume, latency-sensitive interviewer turns on the fast model.
+      interviewer: "openai/gpt-oss-20b"
+      # Cheap extraction tasks don't need the 120b; keep them fast and cheap.
+      parse: "openai/gpt-oss-20b"
 
   openrouter:
     keyEnv: OPENROUTER_API_KEY   # optional; chain simply skips it when absent

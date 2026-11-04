@@ -69,6 +69,23 @@ export class BadRequestError extends LlmError {
   }
 }
 
+/**
+ * The provider rejected the model ID itself (retired, renamed, or never
+ * existed for this account). This is a CONFIGURATION problem, not a
+ * transient outage: the gateway must not cool-down/retry it, and the
+ * message names the fix (update config.yaml) instead of blaming the key.
+ */
+export class ModelNotFoundError extends LlmError {
+  constructor(provider, model, detail = '') {
+    super(
+      `provider "${provider}": model "${model}" was not found or is retired for this account. ` +
+        `Update the model ID in apps/api/src/llm/config.yaml. ${detail}`.trim(),
+      { provider, code: 'model_not_found', status: 404 }
+    );
+    this.model = model;
+  }
+}
+
 export class BudgetExhaustedError extends LlmError {
   constructor(reason) {
     // Friendly wording: this message may reach the visitor (spec Section 2:
@@ -118,6 +135,13 @@ export function httpError(provider, status, parseDetail = '') {
     // never recover). Matched 2026-11-04 against a live invalid-key 400.
     if (/api key not valid|invalid[ _-]?api[ _-]?key|unauthorized/i.test(parseDetail || '')) {
       return new AuthError(provider, status, parseDetail);
+    }
+    // Retired/renamed model ID (Groq: {"code":"model_not_found","message":
+    // "The model `x` does not exist..."}; Gemini: 404 "models/x is not found").
+    // Diagnose the config clearly instead of lumping it with malformed requests.
+    if (/model_not_found|model [`'"][^`'"]+[`'"] (was not found|does not exist|is not found)/i.test(parseDetail || '')) {
+      const m = /model [`'"]([^`'"]+)[`'"]/i.exec(parseDetail || '');
+      return new ModelNotFoundError(provider, m?.[1] || 'unknown', parseDetail);
     }
     return new BadRequestError(provider, status, parseDetail);
   }

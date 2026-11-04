@@ -44,6 +44,7 @@ import {
   ProviderUnavailableError,
   AuthError,
   BadRequestError,
+  ModelNotFoundError,
   BudgetExhaustedError,
   ValidationError,
   NoProviderAvailableError,
@@ -435,6 +436,20 @@ export function createGateway(options = {}) {
         if (err instanceof AuthError) {
           // Wrong key for this provider; the next provider has its own key.
           logger.warn('llm.auth_error', { task, provider: providerName });
+          attempts.push({ provider: providerName, error: err.message });
+          continue;
+        }
+        if (err instanceof ModelNotFoundError) {
+          // Retired/renamed model ID in config.yaml: a configuration problem,
+          // not a transient outage, so no cool-down — but the next provider
+          // has its own model, so failing over keeps the request alive.
+          // Logged at error level so the misconfiguration is unmistakable.
+          logger.error('llm.model_not_found', {
+            task,
+            provider: providerName,
+            model: err.model,
+            hint: 'update the model ID in apps/api/src/llm/config.yaml',
+          });
           attempts.push({ provider: providerName, error: err.message });
           continue;
         }
