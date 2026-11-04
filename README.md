@@ -277,8 +277,15 @@ and Pyodide are unaffected. Toolchain evaluation and decisions:
 
 Per spec Section 13. M1 done (see `MILESTONE1_REPORT.md`); M2 done (see
 `MILESTONE2_REPORT.md`); M3 done (see `MILESTONE3_REPORT.md`); M4 done (see
-`MILESTONE4_REPORT.md`); M5 done (see `MILESTONE5_REPORT.md`). Next: M6 —
-offline problem pipeline.
+`MILESTONE4_REPORT.md`); M5 done (see `MILESTONE5_REPORT.md`); M6 done (see
+`MILESTONE6_REPORT.md`). Next: M7 — interview orchestration.
+
+## Problem bank (Milestone 6, spec §4.9)
+
+52 hand-authored DSA problems, each validated by executing its reference
+solution in real JS/Python/C++ runtimes (`node tools/problem-pipeline/run.js`).
+Bank v1.0.0. Seed into Mongo: `MONGODB_URI=... node tools/seed-problems.js`.
+API: `GET /api/problems`. Full report: `MILESTONE6_REPORT.md`.
 
 ## Security / privacy notes (M1)
 

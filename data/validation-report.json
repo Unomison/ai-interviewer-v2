@@ -1,0 +1,2245 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2026-11-04T12:05:14.776Z",
+  "selected": 52,
+  "passed": 52,
+  "failed": 0,
+  "validations": {
+    "two-sum": {
+      "ok": true,
+      "ms": 15965,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 79,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 4,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 331,
+          "compileMs": 10455,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Inner loop starts at i instead of i+1, reusing the same element.",
+          "firstFailure": 1
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Brute-force O(n²) double loop — different algorithm, same answers.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 3310,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 79,
+          "python": 4,
+          "cpp": 331
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=331ms), floor 1000, cap 10000)"
+      }
+    },
+    "valid-parentheses": {
+      "ok": true,
+      "ms": 13937,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 88,
+          "compileMs": null,
+          "tests": 7
+        },
+        "python": {
+          "maxRuntimeMs": 4,
+          "compileMs": null,
+          "tests": 7
+        },
+        "cpp": {
+          "maxRuntimeMs": 131,
+          "compileMs": 8220,
+          "tests": 7
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Only counts each bracket type; ignores nesting order.",
+          "firstFailure": 3
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Repeatedly deletes adjacent matching pairs — different algorithm.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 2000,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 88,
+          "python": 4,
+          "cpp": 131
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=131ms), floor 1000, cap 10000)"
+      }
+    },
+    "reverse-string": {
+      "ok": true,
+      "ms": 17298,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 191,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 4,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 208,
+          "compileMs": 10591,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Off-by-one: drops the last character of the reversed string.",
+          "firstFailure": 0
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Manual backward loop — different implementation.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 2080,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 191,
+          "python": 4,
+          "cpp": 208
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=208ms), floor 1000, cap 10000)"
+      }
+    },
+    "contains-duplicate": {
+      "ok": true,
+      "ms": 16479,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 125,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 3,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 244,
+          "compileMs": 10886,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Only compares adjacent elements without sorting first.",
+          "firstFailure": 0
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Sort then compare neighbours — different algorithm.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 2440,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 125,
+          "python": 3,
+          "cpp": 244
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=244ms), floor 1000, cap 10000)"
+      }
+    },
+    "best-time-to-buy-sell-stock": {
+      "ok": true,
+      "ms": 16897,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 89,
+          "compileMs": null,
+          "tests": 7
+        },
+        "python": {
+          "maxRuntimeMs": 13,
+          "compileMs": null,
+          "tests": 7
+        },
+        "cpp": {
+          "maxRuntimeMs": 196,
+          "compileMs": 10874,
+          "tests": 7
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Uses global max minus global min, ignoring that the sell must come after the buy.",
+          "firstFailure": 0
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Brute-force all buy/sell pairs.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 2000,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 89,
+          "python": 13,
+          "cpp": 196
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=196ms), floor 1000, cap 10000)"
+      }
+    },
+    "maximum-subarray": {
+      "ok": true,
+      "ms": 17902,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 88,
+          "compileMs": null,
+          "tests": 7
+        },
+        "python": {
+          "maxRuntimeMs": 23,
+          "compileMs": null,
+          "tests": 7
+        },
+        "cpp": {
+          "maxRuntimeMs": 253,
+          "compileMs": 9781,
+          "tests": 7
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Classic Kadane bug: best initialised to 0 instead of nums[0], so all-negative arrays return 0.",
+          "firstFailure": 3
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Brute-force all subarrays.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 2530,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 88,
+          "python": 23,
+          "cpp": 253
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=253ms), floor 1000, cap 10000)"
+      }
+    },
+    "product-except-self": {
+      "ok": true,
+      "ms": 15737,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 96,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 4,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 215,
+          "compileMs": 10339,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Uses division: breaks on zeroes and violates the no-division requirement.",
+          "firstFailure": 1
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "O(n²) nested product — different algorithm, same answers.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 2150,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 96,
+          "python": 4,
+          "cpp": 215
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=215ms), floor 1000, cap 10000)"
+      }
+    },
+    "rotate-array": {
+      "ok": true,
+      "ms": 15495,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 82,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 3,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 293,
+          "compileMs": 9979,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Rotates LEFT instead of right.",
+          "firstFailure": 0
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Slice-based rotation — different implementation.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 2930,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 82,
+          "python": 3,
+          "cpp": 293
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=293ms), floor 1000, cap 10000)"
+      }
+    },
+    "move-zeroes": {
+      "ok": true,
+      "ms": 16405,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 79,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 3,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 297,
+          "compileMs": 10807,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Sorts the array: zeroes end up last but relative order is destroyed.",
+          "firstFailure": 0
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Stable partition via filter/concat — different implementation.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 2970,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 79,
+          "python": 3,
+          "cpp": 297
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=297ms), floor 1000, cap 10000)"
+      }
+    },
+    "majority-element": {
+      "ok": true,
+      "ms": 15876,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 76,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 4,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 313,
+          "compileMs": 10225,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Wrong algorithm: assumes the first element is the majority.",
+          "firstFailure": 3
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Hash-map frequency count — different algorithm.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 3130,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 76,
+          "python": 4,
+          "cpp": 313
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=313ms), floor 1000, cap 10000)"
+      }
+    },
+    "plus-one": {
+      "ok": true,
+      "ms": 16249,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 88,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 5,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 215,
+          "compileMs": 10801,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Forgets to prepend 1 on all-9s overflow (returns [0,0,0] for [9,9,9]).",
+          "firstFailure": 2
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "BigInt-based increment — different implementation.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 2150,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 88,
+          "python": 5,
+          "cpp": 215
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=215ms), floor 1000, cap 10000)"
+      }
+    },
+    "running-sum": {
+      "ok": true,
+      "ms": 15752,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 87,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 4,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 289,
+          "compileMs": 10019,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Off-by-one: each entry sums only the elements strictly before it.",
+          "firstFailure": 0
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Prefix sums via map over slice sums — different implementation.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 2890,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 87,
+          "python": 4,
+          "cpp": 289
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=289ms), floor 1000, cap 10000)"
+      }
+    },
+    "merge-sorted-array": {
+      "ok": true,
+      "ms": 15952,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 85,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 7,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 210,
+          "compileMs": 10272,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Forgets the leftover elements once one array is exhausted.",
+          "firstFailure": 0
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Concatenate then sort — different algorithm.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 2100,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 85,
+          "python": 7,
+          "cpp": 210
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=210ms), floor 1000, cap 10000)"
+      }
+    },
+    "remove-duplicates-sorted": {
+      "ok": true,
+      "ms": 16287,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 91,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 4,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 200,
+          "compileMs": 10751,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Misreads the task: drops every value that appears more than once, instead of collapsing runs.",
+          "firstFailure": 0
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Set-based dedup preserving first-seen order — different implementation.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 2000,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 91,
+          "python": 4,
+          "cpp": 200
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=200ms), floor 1000, cap 10000)"
+      }
+    },
+    "missing-number": {
+      "ok": true,
+      "ms": 16487,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 94,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 3,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 198,
+          "compileMs": 10751,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Wrong algorithm: assumes the missing number is always n.",
+          "firstFailure": 0
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Set lookup for the missing value — different algorithm.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 2000,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 94,
+          "python": 3,
+          "cpp": 198
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=198ms), floor 1000, cap 10000)"
+      }
+    },
+    "squares-of-sorted-array": {
+      "ok": true,
+      "ms": 16972,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 87,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 4,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 355,
+          "compileMs": 10891,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Squares each element but forgets to sort the result.",
+          "firstFailure": 0
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Square then sort — different algorithm.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 3550,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 87,
+          "python": 4,
+          "cpp": 355
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=355ms), floor 1000, cap 10000)"
+      }
+    },
+    "valid-palindrome": {
+      "ok": true,
+      "ms": 15803,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 98,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 3,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 196,
+          "compileMs": 10544,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Compares the raw string without stripping non-alphanumerics or case.",
+          "firstFailure": 0
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Filter then compare with reversed copy — different implementation.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 2000,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 98,
+          "python": 3,
+          "cpp": 196
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=196ms), floor 1000, cap 10000)"
+      }
+    },
+    "valid-anagram": {
+      "ok": true,
+      "ms": 15043,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 85,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 4,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 288,
+          "compileMs": 9584,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Only requires counts to stay non-negative — misses surplus letters in t.",
+          "firstFailure": 3
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Sort both strings and compare — different algorithm.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 2880,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 85,
+          "python": 4,
+          "cpp": 288
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=288ms), floor 1000, cap 10000)"
+      }
+    },
+    "longest-common-prefix": {
+      "ok": true,
+      "ms": 15723,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 93,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 4,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 387,
+          "compileMs": 10092,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Only compares the first two strings, ignoring the rest.",
+          "firstFailure": 0
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Vertical character scan — different algorithm.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 3870,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 93,
+          "python": 4,
+          "cpp": 387
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=387ms), floor 1000, cap 10000)"
+      }
+    },
+    "length-of-last-word": {
+      "ok": true,
+      "ms": 15116,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 74,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 3,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 167,
+          "compileMs": 9576,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Splits on single spaces without trimming: trailing spaces produce an empty last word.",
+          "firstFailure": 1
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Split on whitespace runs — different implementation.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 2000,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 74,
+          "python": 3,
+          "cpp": 167
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=167ms), floor 1000, cap 10000)"
+      }
+    },
+    "reverse-words-in-string": {
+      "ok": true,
+      "ms": 15804,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 80,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 4,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 214,
+          "compileMs": 10362,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Splits on single spaces: multiple spaces become empty words in the output.",
+          "firstFailure": 2
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Manual backward scan — different implementation.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 2140,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 80,
+          "python": 4,
+          "cpp": 214
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=214ms), floor 1000, cap 10000)"
+      }
+    },
+    "first-unique-character": {
+      "ok": true,
+      "ms": 15391,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 95,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 4,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 165,
+          "compileMs": 9968,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Only checks the first occurrence, never verifying the character is unique.",
+          "firstFailure": 1
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "indexOf/lastIndexOf comparison — different implementation.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 2000,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 95,
+          "python": 4,
+          "cpp": 165
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=165ms), floor 1000, cap 10000)"
+      }
+    },
+    "ransom-note": {
+      "ok": true,
+      "ms": 15478,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 110,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 4,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 204,
+          "compileMs": 9497,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Uses includes() without consuming letters: reuses the same magazine letter.",
+          "firstFailure": 2
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Sort-and-consume approach — different algorithm.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 2040,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 110,
+          "python": 4,
+          "cpp": 204
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=204ms), floor 1000, cap 10000)"
+      }
+    },
+    "isomorphic-strings": {
+      "ok": true,
+      "ms": 16084,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 82,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 4,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 399,
+          "compileMs": 10103,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Only maps s→t: misses the case where two s-characters map to one t-character.",
+          "firstFailure": 3
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Compares first-occurrence index patterns — different algorithm.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 3990,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 82,
+          "python": 4,
+          "cpp": 399
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=399ms), floor 1000, cap 10000)"
+      }
+    },
+    "roman-to-integer": {
+      "ok": true,
+      "ms": 16672,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 80,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 6,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 335,
+          "compileMs": 10796,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Adds every symbol value: ignores subtractive notation entirely.",
+          "firstFailure": 2
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Right-to-left scan tracking the max seen — different algorithm.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 3350,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 80,
+          "python": 6,
+          "cpp": 335
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=335ms), floor 1000, cap 10000)"
+      }
+    },
+    "add-strings": {
+      "ok": true,
+      "ms": 16786,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 98,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 3,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 438,
+          "compileMs": 10414,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Drops the carry between digit positions (fails 999+1).",
+          "firstFailure": 1
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Digit-array addition — different implementation.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 4380,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 98,
+          "python": 3,
+          "cpp": 438
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=438ms), floor 1000, cap 10000)"
+      }
+    },
+    "container-with-most-water": {
+      "ok": true,
+      "ms": 18816,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 153,
+          "compileMs": null,
+          "tests": 9
+        },
+        "python": {
+          "maxRuntimeMs": 3,
+          "compileMs": null,
+          "tests": 9
+        },
+        "cpp": {
+          "maxRuntimeMs": 278,
+          "compileMs": 12224,
+          "tests": 9
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Moves the TALLER pointer inward instead of the shorter one.",
+          "firstFailure": 0
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Brute-force all pairs.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 2780,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 153,
+          "python": 3,
+          "cpp": 278
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=278ms), floor 1000, cap 10000)"
+      }
+    },
+    "3sum": {
+      "ok": true,
+      "ms": 16591,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 96,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 4,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 216,
+          "compileMs": 10971,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Never skips duplicate values: emits the same triplet many times.",
+          "firstFailure": 0
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "O(n³) brute force with dedup via key set — different algorithm.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 2160,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 96,
+          "python": 4,
+          "cpp": 216
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=216ms), floor 1000, cap 10000)"
+      }
+    },
+    "two-sum-ii-sorted": {
+      "ok": true,
+      "ms": 15358,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 131,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 3,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 297,
+          "compileMs": 9665,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Returns 0-based indices instead of the required 1-based ones.",
+          "firstFailure": 0
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Binary search for the complement of each element — different algorithm.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 2970,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 131,
+          "python": 3,
+          "cpp": 297
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=297ms), floor 1000, cap 10000)"
+      }
+    },
+    "remove-element": {
+      "ok": true,
+      "ms": 9247,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 78,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 3,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 103,
+          "compileMs": 4392,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Removes only the FIRST occurrence of val.",
+          "firstFailure": 0
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Manual loop build — different implementation.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 2000,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 78,
+          "python": 3,
+          "cpp": 103
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=103ms), floor 1000, cap 10000)"
+      }
+    },
+    "max-average-subarray-i": {
+      "ok": true,
+      "ms": 15828,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 78,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 5,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 304,
+          "compileMs": 10201,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Off-by-one: averages windows of k+1 elements instead of k.",
+          "firstFailure": 0
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Brute-force every window — different algorithm.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 3040,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 78,
+          "python": 5,
+          "cpp": 304
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=304ms), floor 1000, cap 10000)"
+      }
+    },
+    "longest-substring-without-repeating": {
+      "ok": true,
+      "ms": 9660,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 89,
+          "compileMs": null,
+          "tests": 7
+        },
+        "python": {
+          "maxRuntimeMs": 3,
+          "compileMs": null,
+          "tests": 7
+        },
+        "cpp": {
+          "maxRuntimeMs": 129,
+          "compileMs": 4499,
+          "tests": 7
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Moves the window start from a stale position: on a repeat it can jump start BACKWARD (fails \"abba\").",
+          "firstFailure": 3
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Brute-force all substrings with a set — different algorithm.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 2000,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 89,
+          "python": 3,
+          "cpp": 129
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=129ms), floor 1000, cap 10000)"
+      }
+    },
+    "minimum-size-subarray-sum": {
+      "ok": true,
+      "ms": 15842,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 102,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 3,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 311,
+          "compileMs": 10001,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "On reaching the target it jumps the left edge past right instead of shrinking one step.",
+          "firstFailure": 3
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Brute-force all subarrays — different algorithm.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 3110,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 102,
+          "python": 3,
+          "cpp": 311
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=311ms), floor 1000, cap 10000)"
+      }
+    },
+    "contains-duplicate-ii": {
+      "ok": true,
+      "ms": 16270,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 79,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 4,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 314,
+          "compileMs": 10726,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Ignores k: reports any duplicate as a hit.",
+          "firstFailure": 2
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Sliding window set of size k — different algorithm.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 3140,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 79,
+          "python": 4,
+          "cpp": 314
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=314ms), floor 1000, cap 10000)"
+      }
+    },
+    "baseball-game": {
+      "ok": true,
+      "ms": 16271,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 94,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 3,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 269,
+          "compileMs": 10352,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Bug: \"+\" records the sum of ALL previous scores, not just the last two.",
+          "firstFailure": 1
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Index-pointer simulation without push/pop — different implementation.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 2690,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 94,
+          "python": 3,
+          "cpp": 269
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=269ms), floor 1000, cap 10000)"
+      }
+    },
+    "backspace-string-compare": {
+      "ok": true,
+      "ms": 15341,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 82,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 4,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 382,
+          "compileMs": 9402,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Applies only ONE backspace per string (single regex replace).",
+          "firstFailure": 1
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Two pointers from the end, skipping deleted chars — different algorithm.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 3820,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 82,
+          "python": 4,
+          "cpp": 382
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=382ms), floor 1000, cap 10000)"
+      }
+    },
+    "next-greater-element-i": {
+      "ok": true,
+      "ms": 15931,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 79,
+          "compileMs": null,
+          "tests": 7
+        },
+        "python": {
+          "maxRuntimeMs": 3,
+          "compileMs": null,
+          "tests": 7
+        },
+        "cpp": {
+          "maxRuntimeMs": 178,
+          "compileMs": 10391,
+          "tests": 7
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Misreads \"next greater\" as \"maximum greater to the right\".",
+          "firstFailure": 0
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Brute-force scan right for the first greater — different algorithm.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 2000,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 79,
+          "python": 3,
+          "cpp": 178
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=178ms), floor 1000, cap 10000)"
+      }
+    },
+    "binary-search": {
+      "ok": true,
+      "ms": 16152,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 98,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 3,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 350,
+          "compileMs": 10628,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Loop condition lo < hi never inspects the final single-element range.",
+          "firstFailure": 2
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Linear indexOf — different (slower) implementation, same answers.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 3500,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 98,
+          "python": 3,
+          "cpp": 350
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=350ms), floor 1000, cap 10000)"
+      }
+    },
+    "search-insert-position": {
+      "ok": true,
+      "ms": 16453,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 96,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 10,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 291,
+          "compileMs": 10790,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Returns length-1 instead of length when the target belongs at the end.",
+          "firstFailure": 2
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Linear scan — different implementation.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 2910,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 96,
+          "python": 10,
+          "cpp": 291
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=291ms), floor 1000, cap 10000)"
+      }
+    },
+    "sqrtx": {
+      "ok": true,
+      "ms": 16861,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 74,
+          "compileMs": null,
+          "tests": 7
+        },
+        "python": {
+          "maxRuntimeMs": 4,
+          "compileMs": null,
+          "tests": 7
+        },
+        "cpp": {
+          "maxRuntimeMs": 266,
+          "compileMs": 11114,
+          "tests": 7
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Rounds instead of flooring: sqrt(8)≈2.83 becomes 3.",
+          "firstFailure": 1
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Linear scan upward — different (slower) implementation.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 2660,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 74,
+          "python": 4,
+          "cpp": 266
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=266ms), floor 1000, cap 10000)"
+      }
+    },
+    "find-min-rotated": {
+      "ok": true,
+      "ms": 17070,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 166,
+          "compileMs": null,
+          "tests": 7
+        },
+        "python": {
+          "maxRuntimeMs": 4,
+          "compileMs": null,
+          "tests": 7
+        },
+        "cpp": {
+          "maxRuntimeMs": 245,
+          "compileMs": 10409,
+          "tests": 7
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Returns the INDEX of the minimum instead of the minimum value.",
+          "firstFailure": 0
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Linear minimum — different (slower) implementation.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 2450,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 166,
+          "python": 4,
+          "cpp": 245
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=245ms), floor 1000, cap 10000)"
+      }
+    },
+    "sort-colors": {
+      "ok": true,
+      "ms": 18202,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 79,
+          "compileMs": null,
+          "tests": 8
+        },
+        "python": {
+          "maxRuntimeMs": 4,
+          "compileMs": null,
+          "tests": 8
+        },
+        "cpp": {
+          "maxRuntimeMs": 385,
+          "compileMs": 12101,
+          "tests": 8
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Only sweeps 0s to the front; 1s and 2s stay jumbled.",
+          "firstFailure": 0
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Counting sort — different algorithm.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 3850,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 79,
+          "python": 4,
+          "cpp": 385
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=385ms), floor 1000, cap 10000)"
+      }
+    },
+    "kth-largest-element": {
+      "ok": true,
+      "ms": 16231,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 130,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 4,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 201,
+          "compileMs": 10636,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Returns the kth SMALLEST instead of the kth largest.",
+          "firstFailure": 0
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Repeatedly extracts the current maximum k times — different algorithm.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 2010,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 130,
+          "python": 4,
+          "cpp": 201
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=201ms), floor 1000, cap 10000)"
+      }
+    },
+    "height-checker": {
+      "ok": true,
+      "ms": 16295,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 88,
+          "compileMs": null,
+          "tests": 7
+        },
+        "python": {
+          "maxRuntimeMs": 3,
+          "compileMs": null,
+          "tests": 7
+        },
+        "cpp": {
+          "maxRuntimeMs": 578,
+          "compileMs": 10034,
+          "tests": 7
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Counts only positions where the student is TALLER than expected, missing shorter ones.",
+          "firstFailure": 0
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Insertion sort then compare — different sorting implementation.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 5780,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 88,
+          "python": 3,
+          "cpp": 578
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=578ms), floor 1000, cap 10000)"
+      }
+    },
+    "fibonacci": {
+      "ok": true,
+      "ms": 15106,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 81,
+          "compileMs": null,
+          "tests": 7
+        },
+        "python": {
+          "maxRuntimeMs": 4,
+          "compileMs": null,
+          "tests": 7
+        },
+        "cpp": {
+          "maxRuntimeMs": 197,
+          "compileMs": 9338,
+          "tests": 7
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Wrong base case: F(0) = 1 instead of 0.",
+          "firstFailure": 0
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Naive recursion — different implementation.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 2000,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 81,
+          "python": 4,
+          "cpp": 197
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=197ms), floor 1000, cap 10000)"
+      }
+    },
+    "climbing-stairs": {
+      "ok": true,
+      "ms": 15167,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 75,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 3,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 290,
+          "compileMs": 9655,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Wrong model: assumes 2 independent choices per step, giving 2^(n-1).",
+          "firstFailure": 1
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Naive recursion — different implementation.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 2900,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 75,
+          "python": 3,
+          "cpp": 290
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=290ms), floor 1000, cap 10000)"
+      }
+    },
+    "palindrome-number": {
+      "ok": true,
+      "ms": 14594,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 72,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 4,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 281,
+          "compileMs": 8990,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Compares a string to a number with ===: always false.",
+          "firstFailure": 0
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "String reversal — different implementation.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 2810,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 72,
+          "python": 4,
+          "cpp": 281
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=281ms), floor 1000, cap 10000)"
+      }
+    },
+    "reverse-integer": {
+      "ok": true,
+      "ms": 15459,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 75,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 4,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 304,
+          "compileMs": 9598,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "No overflow check: 1534236469 reverses to 9646324351 instead of 0.",
+          "firstFailure": 3
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "String-based reversal with explicit bounds check — different implementation.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 3040,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 75,
+          "python": 4,
+          "cpp": 304
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=304ms), floor 1000, cap 10000)"
+      }
+    },
+    "fizz-buzz": {
+      "ok": true,
+      "ms": 15298,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 77,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 4,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 173,
+          "compileMs": 9962,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Checks divisibility by 3 before 15: multiples of 15 print \"Fizz\".",
+          "firstFailure": 2
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Rule-table driven — different implementation.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 2000,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 77,
+          "python": 4,
+          "cpp": 173
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=173ms), floor 1000, cap 10000)"
+      }
+    },
+    "single-number": {
+      "ok": true,
+      "ms": 16282,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 98,
+          "compileMs": null,
+          "tests": 7
+        },
+        "python": {
+          "maxRuntimeMs": 4,
+          "compileMs": null,
+          "tests": 7
+        },
+        "cpp": {
+          "maxRuntimeMs": 398,
+          "compileMs": 9970,
+          "tests": 7
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "XOR loop skips the last element.",
+          "firstFailure": 0
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Sort then scan pairs — different algorithm.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 3980,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 98,
+          "python": 4,
+          "cpp": 398
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=398ms), floor 1000, cap 10000)"
+      }
+    },
+    "power-of-two": {
+      "ok": true,
+      "ms": 16531,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 126,
+          "compileMs": null,
+          "tests": 7
+        },
+        "python": {
+          "maxRuntimeMs": 5,
+          "compileMs": null,
+          "tests": 7
+        },
+        "cpp": {
+          "maxRuntimeMs": 279,
+          "compileMs": 10372,
+          "tests": 7
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Only checks evenness: 6 passes but is not a power of two.",
+          "firstFailure": 0
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Repeated halving — different implementation.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 2790,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 126,
+          "python": 5,
+          "cpp": 279
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=279ms), floor 1000, cap 10000)"
+      }
+    },
+    "counting-bits": {
+      "ok": true,
+      "ms": 15850,
+      "verify": {
+        "javascript": {
+          "maxRuntimeMs": 117,
+          "compileMs": null,
+          "tests": 6
+        },
+        "python": {
+          "maxRuntimeMs": 4,
+          "compileMs": null,
+          "tests": 6
+        },
+        "cpp": {
+          "maxRuntimeMs": 492,
+          "compileMs": 9759,
+          "tests": 6
+        }
+      },
+      "differential": {
+        "wrong": {
+          "language": "javascript",
+          "note": "Counts BITS IN THE LENGTH (bit-length) instead of set bits.",
+          "firstFailure": 0
+        },
+        "oracle": {
+          "language": "javascript",
+          "note": "Counts via string split — different implementation.",
+          "agreement": "all tests"
+        }
+      },
+      "calibration": {
+        "timeLimitMs": 4920,
+        "memoryMb": 64,
+        "measured": {
+          "javascript": 117,
+          "python": 4,
+          "cpp": 492
+        },
+        "policy": "max(2000, ceil(10 × worstMeasured=492ms), floor 1000, cap 10000)"
+      }
+    }
+  }
+}

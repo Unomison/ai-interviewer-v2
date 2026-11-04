@@ -18,6 +18,7 @@ import { connectDb } from './db.js';
 import healthRouter from './routes/health.js';
 import intakeRouter, { intakeErrorHandler } from './routes/intake.js';
 import sampleRouter from './routes/sample.js';
+import problemsRouter from './routes/problems.js';
 
 dotenv.config();
 
@@ -50,6 +51,7 @@ app.use(express.json({ limit: '1mb' }));
 app.use('/api', healthRouter);
 app.use('/api', intakeRouter);
 app.use('/api', sampleRouter);
+app.use('/api', problemsRouter);
 
 // IntakeError (friendly 4xx) → JSON before the generic 404.
 app.use('/api', intakeErrorHandler);

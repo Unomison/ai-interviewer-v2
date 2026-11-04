@@ -29,6 +29,10 @@ tasks:
     chain: [gemini, groq, openrouter]
   report:
     chain: [gemini, groq, openrouter]
+  problem_gen:
+    chain: [gemini, groq, openrouter]
+    # Problem authoring wants the strongest reasoning available; quality
+    # matters more than latency here (offline pipeline, M6).
   embed:
     chain: [gemini]
     # One hosted embedding model everywhere (spec Section 4.9).

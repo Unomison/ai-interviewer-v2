@@ -30,3 +30,6 @@ coverage/
 
 # Docker
 docker-compose.override.yml
+
+# Offline pipeline toolchain cache (re-downloaded by the pipeline; never commit)
+tools/problem-pipeline/.cache/
