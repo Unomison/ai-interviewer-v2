@@ -280,7 +280,8 @@ Per spec Section 13. M1 done (see `MILESTONE1_REPORT.md`); M2 done (see
 `MILESTONE4_REPORT.md`); M5 done (see `MILESTONE5_REPORT.md`); M6 done (see
 `MILESTONE6_REPORT.md`); M7 done (see `MILESTONE7_REPORT.md`); M8 done (see
 `MILESTONE8_REPORT.md`); M9 done (see `MILESTONE9_REPORT.md`); M10 done (see
-`MILESTONE10_REPORT.md`). Next: M11 — RAG upgrade + measurement.
+`MILESTONE10_REPORT.md`); M11 done (see `MILESTONE11_REPORT.md`). Next: M12 —
+Hardening and launch.
 
 ## Problem bank (Milestone 6, spec §4.9)
 
@@ -390,6 +391,29 @@ reference runtime × 5. Any failure → honest fallback to the closest bank
 problem. Validated JIT problems are session-scoped only; every attempt is
 logged to `wanted_problems` for the next offline run. Full report:
 `MILESTONE10_REPORT.md`; decisions: `docs/decisions/011-report-sharing-jit.md`.
+
+## RAG upgrade + measurement (Milestone 11, spec §4.9)
+
+`apps/api/src/rag/`: a `VectorStore` interface (spec: swappable for Qdrant
+later) with `AtlasVectorStore` (Atlas Vector Search `$vectorSearch` on the
+`kb_chunks` collection) and `MemoryVectorStore` (cosine, for tests/local).
+`tools/ingest-kb.js` chunks M7 KB documents (one chunk per interview angle;
+spec metadata incl. confidence; pruned < 0.55), embeds with
+`gemini-embedding-001` (identity enforced — never mixed), and upserts.
+Retrieval is wired into all four spec uses: planner (`getRagContext`),
+per-turn follow-ups (`retrieveForTurn`, bounded + cached), question dedup
+(asked-question embeddings), and report citations (`sources` on the M10
+report). Hybrid scoring (0.7 vector + 0.3 keyword) with metadata pre-filters;
+`setReranker()` is the seam if evals ever demand reranking.
+
+Graceful by design: `GET /api/rag/status` reports
+`disabled`/`not-indexed`/`indexed` honestly, and every retrieval path falls
+back to the M7 direct KB lookup — the interview never breaks for lack of an
+index. The owner creates the index once via
+`docs/atlas-vector-index-walkthrough.md`, then runs the ingest tool per
+company. Measured comparison (latency/quota/relevance vs no-retrieval):
+`docs/rag-measurement.md` + `tools/rag-eval.js`. Full report:
+`MILESTONE11_REPORT.md`; decisions: `docs/decisions/012-rag-upgrade.md`.
 
 ## Security / privacy notes (M1)
 

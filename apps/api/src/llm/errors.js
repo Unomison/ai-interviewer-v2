@@ -111,6 +111,15 @@ export function httpError(provider, status, parseDetail = '') {
   if (status === 503 || status === 502 || status === 504)
     return new ProviderUnavailableError(provider, `HTTP ${status}`, { status });
   if (status === 401 || status === 403) return new AuthError(provider, status, parseDetail);
-  if (status >= 400 && status < 500) return new BadRequestError(provider, status, parseDetail);
+  if (status >= 400 && status < 500) {
+    // Gemini (and some others) report an invalid API key as 400, not 401.
+    // That is an auth problem: skip this provider and fail over instead of
+    // treating it as a malformed request (which would burn no quota but also
+    // never recover). Matched 2026-11-04 against a live invalid-key 400.
+    if (/api key not valid|invalid[ _-]?api[ _-]?key|unauthorized/i.test(parseDetail || '')) {
+      return new AuthError(provider, status, parseDetail);
+    }
+    return new BadRequestError(provider, status, parseDetail);
+  }
   return new ProviderUnavailableError(provider, `HTTP ${status}`, { status });
 }

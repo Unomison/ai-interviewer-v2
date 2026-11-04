@@ -1,0 +1,228 @@
+{
+  "generatedAt": "2026-11-04T14:17:20.125Z",
+  "embeddings": "mock (deterministic) — vector term is noise; keyword/metadata terms rank. See docs/rag-measurement.md.",
+  "summary": {
+    "queries": 10,
+    "k": 4,
+    "chunkCount": 21,
+    "ingestMs": 10,
+    "avgLatencyMs": 0.5,
+    "hitRate": 0.9,
+    "avgPrecisionAtK": 0.225,
+    "avgRecallAtK": 0.9,
+    "mrr": 0.85,
+    "embedCallsPerRetrieval": 1,
+    "totalEmbedCalls": 31
+  },
+  "baseline": {
+    "mode": "no-retrieval (direct KB read)",
+    "promptCharsFor2Companies": 2832,
+    "retrievalPromptCharsAvg": 443,
+    "promptCharsSavedPct": 84.4,
+    "latencyAddedMs": 0.5,
+    "extraEmbedCallsPerRetrieval": 1,
+    "note": "Baseline topic coverage is 1.0 by construction (whole doc in prompt); retrieval trades a small latency + 1 embed call for a focused, citable top-k."
+  },
+  "perQuery": [
+    {
+      "query": "what multithreading and concurrency questions come up",
+      "company": "Nokia",
+      "expectTopics": [
+        "concurrency"
+      ],
+      "gotTopics": [
+        "concurrency",
+        "computer networking",
+        "distributed systems",
+        "debugging production systems"
+      ],
+      "textChars": 536,
+      "hit": 1,
+      "latencyMs": 2,
+      "embedCalls": 1,
+      "precisionAtK": 0.25,
+      "recallAtK": 1,
+      "reciprocalRank": 1
+    },
+    {
+      "query": "do they ask about TCP IP and routing protocols",
+      "company": "Nokia",
+      "expectTopics": [
+        "computer networking"
+      ],
+      "gotTopics": [
+        "computer networking",
+        "debugging production systems",
+        "company overview",
+        "engineering practices"
+      ],
+      "textChars": 501,
+      "hit": 1,
+      "latencyMs": 0,
+      "embedCalls": 1,
+      "precisionAtK": 0.25,
+      "recallAtK": 1,
+      "reciprocalRank": 1
+    },
+    {
+      "query": "C++ memory management interview topics",
+      "company": "Nokia",
+      "expectTopics": [
+        "C++ systems programming"
+      ],
+      "gotTopics": [
+        "c++ systems programming",
+        "debugging production systems",
+        "distributed systems",
+        "computer networking"
+      ],
+      "textChars": 529,
+      "hit": 1,
+      "latencyMs": 0,
+      "embedCalls": 1,
+      "precisionAtK": 0.25,
+      "recallAtK": 1,
+      "reciprocalRank": 1
+    },
+    {
+      "query": "how to handle live production incidents",
+      "company": "Nokia",
+      "expectTopics": [
+        "debugging production systems"
+      ],
+      "gotTopics": [
+        "debugging production systems",
+        "culture",
+        "company overview",
+        "engineering practices"
+      ],
+      "textChars": 442,
+      "hit": 1,
+      "latencyMs": 1,
+      "embedCalls": 1,
+      "precisionAtK": 0.25,
+      "recallAtK": 1,
+      "reciprocalRank": 1
+    },
+    {
+      "query": "consensus algorithms for distributed teams",
+      "company": "Nokia",
+      "expectTopics": [
+        "distributed systems"
+      ],
+      "gotTopics": [
+        "distributed systems",
+        "engineering practices",
+        "c++ systems programming",
+        "debugging production systems"
+      ],
+      "textChars": 459,
+      "hit": 1,
+      "latencyMs": 0,
+      "embedCalls": 1,
+      "precisionAtK": 0.25,
+      "recallAtK": 1,
+      "reciprocalRank": 1
+    },
+    {
+      "query": "designing REST APIs with idempotency",
+      "company": "Stripe",
+      "expectTopics": [
+        "API design"
+      ],
+      "gotTopics": [
+        "api design",
+        "distributed transactions",
+        "company overview",
+        "engineering practices"
+      ],
+      "textChars": 442,
+      "hit": 1,
+      "latencyMs": 1,
+      "embedCalls": 1,
+      "precisionAtK": 0.25,
+      "recallAtK": 1,
+      "reciprocalRank": 1
+    },
+    {
+      "query": "payment consistency across services",
+      "company": "Stripe",
+      "expectTopics": [
+        "distributed transactions"
+      ],
+      "gotTopics": [
+        "recent developments",
+        "distributed transactions",
+        "tech stack",
+        "rate limiting"
+      ],
+      "textChars": 361,
+      "hit": 1,
+      "latencyMs": 0,
+      "embedCalls": 1,
+      "precisionAtK": 0.25,
+      "recallAtK": 1,
+      "reciprocalRank": 0.5
+    },
+    {
+      "query": "postgres indexing and query performance",
+      "company": "Stripe",
+      "expectTopics": [
+        "databases"
+      ],
+      "gotTopics": [
+        "databases",
+        "company overview",
+        "engineering practices",
+        "culture"
+      ],
+      "textChars": 391,
+      "hit": 1,
+      "latencyMs": 0,
+      "embedCalls": 1,
+      "precisionAtK": 0.25,
+      "recallAtK": 1,
+      "reciprocalRank": 1
+    },
+    {
+      "query": "protecting APIs from abuse with throttling",
+      "company": "Stripe",
+      "expectTopics": [
+        "rate limiting"
+      ],
+      "gotTopics": [
+        "company overview",
+        "api design",
+        "databases",
+        "recent developments"
+      ],
+      "textChars": 424,
+      "hit": 0,
+      "latencyMs": 0,
+      "embedCalls": 1,
+      "precisionAtK": 0,
+      "recallAtK": 0,
+      "reciprocalRank": 0
+    },
+    {
+      "query": "tech stack used by the backend teams",
+      "company": "Stripe",
+      "expectTopics": [
+        "tech stack"
+      ],
+      "gotTopics": [
+        "tech stack",
+        "engineering practices",
+        "culture",
+        "company overview"
+      ],
+      "textChars": 343,
+      "hit": 1,
+      "latencyMs": 1,
+      "embedCalls": 1,
+      "precisionAtK": 0.25,
+      "recallAtK": 1,
+      "reciprocalRank": 1
+    }
+  ]
+}

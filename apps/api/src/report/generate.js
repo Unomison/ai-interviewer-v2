@@ -184,6 +184,10 @@ export async function generateReport(input, deps = {}) {
       verifiedQuotes: enforced.verifiedQuotes,
       inferenceClaims: enforced.inferenceClaims,
     },
+    // Milestone 11 — source citations for KB-grounded claims (spec §4.9
+    // use #4). Collected at interview start from retrieved chunks (vector)
+    // or the KB document's source list (direct fallback).
+    sources: Array.isArray(session.ragCitations) ? session.ragCitations : [],
     disclaimer: DISCLAIMER,
   };
 

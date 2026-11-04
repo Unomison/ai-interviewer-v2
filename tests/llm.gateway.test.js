@@ -278,3 +278,50 @@ describe('M2 gateway — budget', () => {
     );
   });
 });
+
+describe('httpError: invalid-key 400s are auth failures (2026-11-04 live bug)', () => {
+  test('400 "API key not valid" maps to AuthError (fails over), not BadRequestError', async () => {
+    const { httpError, AuthError, BadRequestError } = await import('../apps/api/src/llm/errors.js');
+    const err = httpError('gemini', 400, '{"error":{"code":400,"message":"API key not valid. Please pass a valid API key.","status":"INVALID_ARGUMENT"}}');
+    assert.ok(err instanceof AuthError, `expected AuthError, got ${err?.name}`);
+    assert.equal(err.status, 400);
+  });
+
+  test('400 without key complaint still maps to BadRequestError (no failover)', async () => {
+    const { httpError, BadRequestError, AuthError } = await import('../apps/api/src/llm/errors.js');
+    const err = httpError('gemini', 400, '{"error":{"message":"Invalid JSON payload"}}');
+    assert.ok(err instanceof BadRequestError, `expected BadRequestError, got ${err?.name}`);
+    assert.ok(!(err instanceof AuthError));
+  });
+
+  test('401 still maps to AuthError', async () => {
+    const { httpError, AuthError } = await import('../apps/api/src/llm/errors.js');
+    assert.ok(httpError('groq', 401, 'invalid key') instanceof AuthError);
+  });
+});
+
+describe('gemini adapter: responseSchema sanitization (2026-11-04 live bug)', () => {
+  test('strips additionalProperties and $schema, keeps shape', async () => {
+    const { geminiAdapter } = await import('../apps/api/src/llm/adapters/gemini.js');
+    let captured = null;
+    const fakeFetch = async (_url, opts) => {
+      captured = JSON.parse(opts.body);
+      return { ok: true, json: async () => ({ candidates: [{ content: { parts: [{ text: '{}' }] } }], usageMetadata: {} }) };
+    };
+    const schema = {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      type: 'object',
+      properties: {
+        skills: { type: 'array', items: { type: 'string' }, additionalProperties: false },
+      },
+      required: ['skills'],
+      additionalProperties: false,
+    };
+    await geminiAdapter.generate({ prompt: 'x', jsonSchema: schema, model: 'm', timeoutMs: 5000, env: { GEMINI_API_KEY: 'k' }, fetchImpl: fakeFetch });
+    const rs = captured.generationConfig.responseSchema;
+    assert.ok(!JSON.stringify(rs).includes('additionalProperties'), 'additionalProperties must be stripped');
+    assert.ok(!JSON.stringify(rs).includes('$schema'), '$schema must be stripped');
+    assert.equal(rs.type, 'object');
+    assert.deepEqual(rs.required, ['skills']);
+  });
+});

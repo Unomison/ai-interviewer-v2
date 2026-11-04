@@ -60,11 +60,22 @@ function compactKb(kb) {
   }).slice(0, 2500);
 }
 
-function plannerPrompt({ resumeJson, jdJson, kb, atsGaps, seniority, company, role }) {
+function plannerPrompt({ resumeJson, jdJson, kb, atsGaps, seniority, company, role, ragChunks = [] }) {
   const gaps = [
     ...(atsGaps?.genuineGaps || []),
     ...(atsGaps?.unstatedButPresent || []),
   ].slice(0, 12);
+  // Milestone 11 — retrieved company patterns (vector search). When the
+  // index isn't ready, ragChunks is empty and the direct KB read below is
+  // the whole company signal (the M7/M8 path, unchanged).
+  const ragBlock =
+    ragChunks.length > 0
+      ? `retrieved company patterns (vector search, most relevant first):\n` +
+        ragChunks
+          .slice(0, 6)
+          .map((c) => `- [${c.metadata?.topic || 'pattern'}] ${String(c.text).slice(0, 280)}`)
+          .join('\n') + `\n`
+      : '';
   return (
     `${DATA_GUARD}\n\n` +
     `You are planning a mock software-engineering interview. Design per-round content as JSON.\n` +
@@ -80,6 +91,7 @@ function plannerPrompt({ resumeJson, jdJson, kb, atsGaps, seniority, company, ro
     `resume: ${compactResume(resumeJson)}\n` +
     `jd: ${JSON.stringify(jdJson || {}).slice(0, 1500)}\n` +
     `company research: ${compactKb(kb)}\n` +
+    `${ragBlock}` +
     `ats skill gaps: ${gaps.join(', ') || 'none identified'}\n` +
     `</data>`
   );
@@ -138,7 +150,7 @@ export function assemblePlan(content, problems) {
  * @returns {Promise<Array>} the ordered round plan.
  */
 export async function planInterview(
-  { resumeJson, jdJson, kb, atsGaps, seniority, company, role },
+  { resumeJson, jdJson, kb, atsGaps, seniority, company, role, ragChunks = [] },
   gw = gateway,
 ) {
   const problems = await selectProblems({
@@ -146,7 +158,7 @@ export async function planInterview(
     gapSkills: atsGaps?.genuineGaps || [],
     count: 2,
   });
-  const prompt = plannerPrompt({ resumeJson, jdJson, kb, atsGaps, seniority, company, role });
+  const prompt = plannerPrompt({ resumeJson, jdJson, kb, atsGaps, seniority, company, role, ragChunks });
   const { data } = await gw.generate({ task: 'planner', prompt, schema: planContentSchema });
   return assemblePlan(data, problems);
 }

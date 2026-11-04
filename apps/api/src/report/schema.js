@@ -137,4 +137,6 @@ export const reportDocSchema = z.object({
   shareToken: z.string().nullable(),
   shareCreatedAt: z.string().nullable(),
   shareRevoked: z.boolean(),
+  /** Milestone 11 — KB source citations for company-grounded claims. */
+  sources: z.array(z.object({ url: z.string(), topic: z.string() })).default([]),
 });

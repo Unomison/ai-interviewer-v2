@@ -72,6 +72,10 @@ const interviewSessionSchema = new mongoose.Schema(
     role: { type: String, default: null },
     seniority: { type: String, default: null },
     kbSource: { type: String, default: 'none' },
+    /** Milestone 11 — how the planner got company knowledge. */
+    ragMode: { type: String, enum: ['vector', 'direct', 'none'], default: 'direct' },
+    /** Milestone 11 — source citations for KB-grounded claims (spec §4.9 use #4). */
+    ragCitations: { type: [Object], default: [] },
     startedAt: { type: Date, default: Date.now },
     endedAt: { type: Date, default: null },
     /** TTL index: MongoDB auto-deletes the document at this time. */
@@ -118,7 +122,7 @@ function initialRounds() {
   return rounds;
 }
 
-export async function createSession({ intakeToken, plan, company, role, seniority, kbSource }) {
+export async function createSession({ intakeToken, plan, company, role, seniority, kbSource, ragCitations = [], ragMode = 'direct' }) {
   const dsaProblems = (plan.find((r) => r.type === 'dsa')?.problems || []).map((p) => p.slug);
   const dsa = {};
   for (const slug of dsaProblems) {
@@ -152,6 +156,8 @@ export async function createSession({ intakeToken, plan, company, role, seniorit
     role: role || null,
     seniority: seniority || null,
     kbSource: kbSource || 'none',
+    ragMode,
+    ragCitations: Array.isArray(ragCitations) ? ragCitations : [],
     startedAt: new Date(),
     endedAt: null,
     expiresAt: interviewExpiry(),

@@ -74,6 +74,27 @@ function extractUsage(data) {
   };
 }
 
+/**
+ * Gemini's responseSchema accepts only a subset of JSON Schema (OpenAPI 3.0-ish:
+ * type, enum, properties, required, items, format, description, nullable).
+ * zod-to-json-schema emits `additionalProperties: false` (and `$schema`),
+ * which Gemini rejects with 400 "Unknown name \"additionalProperties\"".
+ * Seen live 2026-11-04. Strip unsupported keywords recursively; the shape
+ * stays identical for validation purposes.
+ */
+function sanitizeSchemaForGemini(schema) {
+  if (Array.isArray(schema)) return schema.map(sanitizeSchemaForGemini);
+  if (schema && typeof schema === 'object') {
+    const out = {};
+    for (const [k, v] of Object.entries(schema)) {
+      if (k === 'additionalProperties' || k === '$schema') continue;
+      out[k] = sanitizeSchemaForGemini(v);
+    }
+    return out;
+  }
+  return schema;
+}
+
 export const geminiAdapter = {
   name: 'gemini',
   keyEnv: 'GEMINI_API_KEY',
@@ -88,7 +109,7 @@ export const geminiAdapter = {
     const generationConfig = {};
     if (jsonSchema) {
       generationConfig.responseMimeType = 'application/json';
-      generationConfig.responseSchema = jsonSchema;
+      generationConfig.responseSchema = sanitizeSchemaForGemini(jsonSchema);
     }
     const data = await postJson(
       url,

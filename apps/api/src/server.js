@@ -24,6 +24,7 @@ import interviewRouter from './routes/interview.js';
 import voiceRouter from './routes/voice.js';
 import reportRouter from './routes/report.js';
 import llmRouter from './routes/llm.js';
+import ragRouter from './routes/rag.js';
 
 dotenv.config();
 
@@ -62,9 +63,25 @@ app.use('/api', interviewRouter);
 app.use('/api', voiceRouter);
 app.use('/api', reportRouter);
 app.use('/api', llmRouter);
+app.use('/api', ragRouter);
 
 // IntakeError (friendly 4xx) → JSON before the generic 404.
 app.use('/api', intakeErrorHandler);
+
+// Last-resort error handler: the client NEVER gets an HTML stack trace.
+// Provider/LLM failures become an honest 502 JSON instead of Express's
+// default HTML "Bad Request" page (seen live 2026-11-04 when Gemini
+// rejected an invalid API key with HTTP 400).
+app.use('/api', (err, _req, res, _next) => {
+  const status = err?.status || err?.statusCode || 500;
+  const code = err?.code || 'internal_error';
+  const message =
+    err?.name === 'LlmError' || /Error$/.test(err?.name || '')
+      ? 'The AI service had trouble with that request. Please try again — if it keeps happening, check the API keys in the Render dashboard.'
+      : 'Something went wrong on our side. Please try again.';
+  logger.error('unhandled api error', { code, status, detail: String(err?.message || err).slice(0, 300) });
+  res.status(status >= 500 ? 502 : status).json({ error: code, message });
+});
 
 // 404 for unknown API routes (JSON, not an HTML stack trace).
 app.use('/api', (_req, res) => res.status(404).json({ error: 'not_found' }));

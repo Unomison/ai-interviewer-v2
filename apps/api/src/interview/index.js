@@ -14,6 +14,7 @@
 import { gateway } from '../llm/index.js';
 import { getSession as getIntakeSession } from '../intake/store.js';
 import { researchCompany } from '../research/index.js';
+import { getRagContext, retrieveForTurn, noteAskedQuestions } from '../rag/index.js';
 import { getFullProblem, toClientSafeDsaProblem } from '../problems/index.js';
 import { planInterview } from './planner.js';
 import { generateTurn, generateTurnChunks } from './interviewer.js';
@@ -137,6 +138,23 @@ export async function startInterview({ intakeToken }, deps = {}) {
   }
 
   let plan;
+  // Milestone 11 — retrieval for the planner (spec §4.9 use #1). Best
+  // effort: falls back to the direct KB read when the vector index isn't
+  // ready; never blocks or throws the start.
+  let ragChunks = [];
+  let ragCitations = [];
+  let ragMode = 'direct';
+  try {
+    const rag = await getRagContext(
+      { company: intake.company, role: intake.role || '', kb },
+      { gw },
+    );
+    ragChunks = rag.chunks || [];
+    ragCitations = rag.citations || [];
+    ragMode = rag.mode;
+  } catch {
+    /* direct KB path below */
+  }
   try {
     plan = await planInterview(
       {
@@ -147,6 +165,7 @@ export async function startInterview({ intakeToken }, deps = {}) {
         seniority: intake.seniority,
         company: intake.company,
         role: intake.role,
+        ragChunks,
       },
       gw,
     );
@@ -161,6 +180,8 @@ export async function startInterview({ intakeToken }, deps = {}) {
     role: intake.role,
     seniority: intake.seniority,
     kbSource,
+    ragCitations,
+    ragMode,
   });
 
   let opening;
@@ -227,13 +248,30 @@ export async function takeTurn({ sessionToken, text }, deps = {}) {
   await store.appendTurn(sessionToken, 'candidate', text.trim(), session.currentRound);
   session = await store.getSession(sessionToken);
 
+  // Milestone 11 — per-turn retrieval (spec §4.9 use #2): bounded top-k
+  // company patterns for sharper follow-ups. Best-effort, never breaks
+  // the turn.
+  let ragExtra = '';
+  try {
+    ragExtra = await retrieveForTurn({ session, candidateText: text.trim(), gw });
+  } catch {
+    /* interview continues without retrieval */
+  }
+
   let turn;
   try {
-    turn = await generateTurn({ session, candidateText: text.trim() }, gw);
+    turn = await generateTurn({ session, candidateText: text.trim(), extraContext: ragExtra }, gw);
   } catch (err) {
     return { ok: false, error: 'interviewer_unavailable', message: `The interviewer is unavailable right now: ${err.message}` };
   }
   await store.appendTurn(sessionToken, 'interviewer', turn.message, session.currentRound);
+
+  // Milestone 11 — question dedup ledger (spec §4.9 use #3). Best-effort.
+  try {
+    await noteAskedQuestions({ sessionToken, message: turn.message, gw });
+  } catch {
+    /* dedup is advisory */
+  }
 
   const applied = await applyTurnFlags(sessionToken, turn);
   if (!applied.ok) return applied;
@@ -294,9 +332,17 @@ export async function* takeTurnStream({ sessionToken, text }, deps = {}) {
   await store.appendTurn(sessionToken, 'candidate', text.trim(), session.currentRound);
   session = await store.getSession(sessionToken);
 
+  // Milestone 11 — per-turn retrieval (spec §4.9 use #2). Best-effort.
+  let ragExtra = '';
+  try {
+    ragExtra = await retrieveForTurn({ session, candidateText: text.trim(), gw });
+  } catch {
+    /* interview continues without retrieval */
+  }
+
   let finalTurn;
   try {
-    for await (const ev of generateTurnChunks({ session, candidateText: text.trim() }, gw)) {
+    for await (const ev of generateTurnChunks({ session, candidateText: text.trim(), extraContext: ragExtra }, gw)) {
       if (ev.type === 'chunk') yield { type: 'chunk', text: ev.text };
       else finalTurn = ev.turn;
     }
@@ -309,6 +355,13 @@ export async function* takeTurnStream({ sessionToken, text }, deps = {}) {
     return;
   }
   await store.appendTurn(sessionToken, 'interviewer', finalTurn.message, session.currentRound);
+
+  // Milestone 11 — question dedup ledger (spec §4.9 use #3). Best-effort.
+  try {
+    await noteAskedQuestions({ sessionToken, message: finalTurn.message, gw });
+  } catch {
+    /* dedup is advisory */
+  }
 
   const applied = await applyTurnFlags(sessionToken, finalTurn);
   if (!applied.ok) {
