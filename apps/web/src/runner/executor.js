@@ -20,7 +20,7 @@ import {
 
 export const DEFAULT_TIME_LIMIT_MS = 2000;
 /** Per-language time-limit multipliers (spec §4.8; Python is slower under Pyodide). */
-export const LANGUAGE_TIME_MULTIPLIER = { javascript: 1, python: 3 };
+export const LANGUAGE_TIME_MULTIPLIER = { javascript: 1, python: 3, cpp: 1 };
 export const MAX_OUTPUT_BYTES = 262144; // 256 KB per test output
 
 function limitFor(problem, language) {

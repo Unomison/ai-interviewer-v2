@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import { runJavaScriptTests, runPythonTests } from '../executor.js';
+import { runCppTests, createBrowserCppCompilerWorker, createBrowserCppRunnerWorker } from '../cpp.js';
 import { createPythonWorker } from '../pyodide.js';
 import { firstVisibleFailure, statusLabel } from '../harness.js';
 
@@ -7,8 +8,9 @@ import { firstVisibleFailure, statusLabel } from '../harness.js';
  * Milestone 4 — test runner UI (spec §4.6 results panel).
  *
  * - "Run tests" executes the candidate's code in a Web Worker (JS native,
- *   Python via Pyodide) with per-test timeouts; the worker is terminated on
- *   overrun and the test is marked TLE.
+ *   Python via Pyodide, C++ compiled in-browser with Clang → wasm) with
+ *   per-test timeouts; the worker is terminated on overrun and the test is
+ *   marked TLE. C++ compile errors surface the compiler output (no hang).
  * - Per-test pass/fail, runtime ms, errors. The FIRST failing case may be
  *   shown (configurable); hidden test inputs are never displayed.
  * - Overall verdict banner: all pass / failed / TLE / error.
@@ -68,7 +70,16 @@ export default function TestRunner({ problem, code, language, showFirstFailure =
       const out =
         language === 'python'
           ? await runPythonTests({ code, problem, createWorker: createPythonWorker, onProgress, onTestDone })
-          : await runJavaScriptTests({ code, problem, onTestDone });
+          : language === 'cpp'
+            ? await runCppTests({
+                code,
+                problem,
+                createCompilerWorker: createBrowserCppCompilerWorker,
+                createRunnerWorker: createBrowserCppRunnerWorker,
+                onProgress,
+                onTestDone,
+              })
+            : await runJavaScriptTests({ code, problem, onTestDone });
       if (runId.current !== id) return;
       setSummary(out);
       setPhase('done');
@@ -127,7 +138,7 @@ export default function TestRunner({ problem, code, language, showFirstFailure =
 
       {runError && (
         <div className="mt-3 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-800" role="alert">
-          {runError}
+          <pre className="whitespace-pre-wrap font-sans">{runError}</pre>
         </div>
       )}
 

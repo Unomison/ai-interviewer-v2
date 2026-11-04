@@ -12,7 +12,7 @@ import TestRunner from '../components/TestRunner.jsx';
  * runner, the locked editor, and the timeout semantics end to end.
  */
 
-const LANGUAGE_LABEL = { javascript: 'JavaScript', python: 'Python' };
+const LANGUAGE_LABEL = { javascript: 'JavaScript', python: 'Python', cpp: 'C++' };
 
 export default function Playground({ onBack }) {
   const [problemId, setProblemId] = useState(PROBLEMS[0].id);
@@ -83,6 +83,12 @@ export default function Playground({ onBack }) {
           {language === 'python' && (
             <p className="text-xs text-slate-500">Python loads a ~15 MB runtime on first run — cached afterwards.</p>
           )}
+          {language === 'cpp' && (
+            <p className="text-xs text-slate-500">
+              C++ loads a ~24 MB compiler on first run (cached afterwards); each run compiles in ~10–15 s. No
+              try/catch — exceptions aren&apos;t supported in the browser build.
+            </p>
+          )}
         </div>
 
         <section className="mt-6 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -132,7 +138,8 @@ export default function Playground({ onBack }) {
         </section>
 
         <p className="mt-8 text-center text-xs text-slate-400">
-          Code runs entirely in your browser (Web Worker{language === 'python' ? ' + Pyodide' : ''}) — nothing is sent
+          Code runs entirely in your browser (Web Worker
+          {language === 'python' ? ' + Pyodide' : language === 'cpp' ? ' + in-browser Clang' : ''}) — nothing is sent
           to any server. Hidden test inputs are never displayed.
         </p>
       </main>

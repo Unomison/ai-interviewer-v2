@@ -216,17 +216,19 @@ Candidate code runs **entirely in the visitor's browser** — inside Web
 Workers with hard timeouts. There is deliberately no server-side execution
 of untrusted code (spec non-goal). JavaScript runs natively; Python runs
 through Pyodide (WebAssembly), lazy-loaded from CDN only when Python is
-picked, with a progress indicator; C++ arrives in Milestone 5.
+picked, with a progress indicator; C++ (Milestone 5) compiles in-browser
+with a real Clang/LLD toolchain, also lazy-loaded from CDN.
 
 - **Locked editor**: Monaco (loaded from CDN at runtime — never bundled;
-  the production JS is ~195 KB), readOnly with the overlay "Explain your
+  the production JS is ~220 KB), readOnly with the overlay "Explain your
   approach to unlock" (spec §4.6). The LLM-judged unlock is M8; M4 has a
   demo toggle.
 - **Test harness**: your code defines `solve(...)`; the harness calls it per
   test with the problem's JSON args and compares canonicalised output
   (`exact` / float tolerance / `unordered`). Per-test timeout (default
-  2 s; Python ×3 multiplier): on overrun the worker is **terminated**, the
-  test is marked TLE, and the run continues with the next test.
+  2 s; Python ×3, C++ ×1 multipliers): on overrun the worker is
+  **terminated**, the test is marked TLE, and the run continues with the
+  next test.
 - **Results panel**: per-test pass/fail, runtime, errors. Only the first
   failing *visible* test reveals input/expected/got; hidden inputs are never
   displayed.
@@ -238,11 +240,45 @@ Accepted trade-off (spec §4.8): tests ship to the browser, so a determined
 visitor could read hidden tests — fine for a self-practice tool. Design
 details: `docs/decisions/005-in-browser-runner.md`.
 
+### C++ in the browser (Milestone 5, spec §4.8)
+
+C++ is a third language in the playground picker, running the same 4
+problems. The toolchain is **browsercc v0.1.1** (MIT) — a precompiled
+wasm Clang + LLD — loaded from the jsDelivr CDN at runtime. Nothing is
+vendored into git or the JS bundle.
+
+- **One-time download ≈ 24 MB** (measured: clang.wasm 13.9 MB + lld.wasm
+  6.3 MB + sysroot.tar 3.9 MB, compressed), cached by the browser
+  afterwards; a staged progress bar shows the download, then the compile.
+  `prewarmCppToolchain()` is exported so M8 can start loading while the
+  candidate explains their approach.
+- **Compile** happens in a module Web Worker
+  (`-std=c++17 -O2 -fno-exceptions`, 8 MB stack, 64 MB memory cap);
+  **run** happens in a classic worker under our own minimal WASI shim.
+  Compile once per submit (~10–16 s measured); each test runs in a fresh
+  worker, and a TLE terminates the worker while the **already-compiled
+  module is reused** — no recompile.
+- **`bits/stdc++.h` works** via our injected shim (the WASI sysroot does
+  not ship it). The generated harness reads one JSON test per stdin line
+  and prints `@@TEST` / `@@RESULT` / `@@TIME` markers.
+- **Limits** (WASI): no C++ exceptions — `try`/`catch` fails the compile
+  with a clear error and guidance; no threads; don't define your own
+  `main()`.
+- **Fallback**: if the toolchain can't load (e.g. a low-memory phone),
+  the UI says so honestly and suggests JavaScript/Python. The
+  spec-optional hosted executor is not built.
+
+No SharedArrayBuffer is needed, so no COOP/COEP headers — Monaco, fonts,
+and Pyodide are unaffected. Toolchain evaluation and decisions:
+`docs/decisions/006-cpp-toolchain.md`; milestone report:
+`MILESTONE5_REPORT.md`.
+
 ## Milestones
 
 Per spec Section 13. M1 done (see `MILESTONE1_REPORT.md`); M2 done (see
-`MILESTONE2_REPORT.md`); M3 done (see `MILESTONE3_REPORT.md`). Next: M4
-in-browser runner + locked editor (Monaco, Workers, Pyodide).
+`MILESTONE2_REPORT.md`); M3 done (see `MILESTONE3_REPORT.md`); M4 done (see
+`MILESTONE4_REPORT.md`); M5 done (see `MILESTONE5_REPORT.md`). Next: M6 —
+offline problem pipeline.
 
 ## Security / privacy notes (M1)
 

@@ -13,7 +13,7 @@ import { getEditorLockState } from '../harness.js';
  * Monaco itself is loaded from CDN at runtime by @monaco-editor/react —
  * it is never part of the app bundle (see ADR 005).
  */
-const MONACO_LANGUAGE = { javascript: 'javascript', python: 'python' };
+const MONACO_LANGUAGE = { javascript: 'javascript', python: 'python', cpp: 'cpp' };
 
 export default function LockedEditor({
   language = 'javascript',

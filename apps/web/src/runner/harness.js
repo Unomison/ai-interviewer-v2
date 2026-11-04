@@ -217,3 +217,347 @@ export function statusLabel(status) {
     default: return status;
   }
 }
+
+// ---------------------------------------------------------------------------
+// Milestone 5 — C++ harness generation.
+//
+// The browsercc WASI sysroot does not ship bits/stdc++.h, but many DSA
+// candidates write `#include <bits/stdc++.h>`. We inject our own shim via
+// browsercc's `extraFiles` (compiled with `-I.`), so no extra download is
+// needed. The shim intentionally covers the headers DSA solutions use — it
+// is not a byte-identical copy of libstdc++'s mega-header.
+// ---------------------------------------------------------------------------
+
+/** Contents of the injected `bits/stdc++.h` shim (passed as an extraFile). */
+export const STDCPP_SHIM = `#pragma once
+// bits/stdc++.h shim for the ai-interviewer browser runner (Milestone 5).
+// The wasm-Clang WASI sysroot does not ship this header; this shim pulls in
+// the standard headers DSA solutions commonly need.
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <map>
+#include <set>
+#include <unordered_map>
+#include <unordered_set>
+#include <queue>
+#include <stack>
+#include <deque>
+#include <list>
+#include <array>
+#include <cmath>
+#include <climits>
+#include <cstdint>
+#include <limits>
+#include <numeric>
+#include <functional>
+#include <utility>
+#include <sstream>
+#include <iomanip>
+#include <chrono>
+#include <cctype>
+#include <bitset>
+#include <tuple>
+`;
+
+/**
+ * v1 type -> C++ declaration / harness converter / harness printer.
+ * Mirrors the problem-spec types (spec §4.8): int, float, bool, string and
+ * 1D/2D arrays of those. `int` is 32-bit (LeetCode convention).
+ */
+export const CPP_TYPES = {
+  int: { decl: 'int', conv: 'as_int' },
+  float: { decl: 'double', conv: 'as_double' },
+  bool: { decl: 'bool', conv: 'as_bool' },
+  string: { decl: 'std::string', conv: 'as_str' },
+  'int[]': { decl: 'std::vector<int>', conv: 'as_vec_int' },
+  'float[]': { decl: 'std::vector<double>', conv: 'as_vec_double' },
+  'bool[]': { decl: 'std::vector<bool>', conv: 'as_vec_bool' },
+  'string[]': { decl: 'std::vector<std::string>', conv: 'as_vec_string' },
+  'int[][]': { decl: 'std::vector<std::vector<int>>', conv: 'as_vec_vec_int' },
+  'float[][]': { decl: 'std::vector<std::vector<double>>', conv: 'as_vec_vec_double' },
+};
+
+/**
+ * Generate the C++ test-harness source for a problem (spec §4.8): reads one
+ * JSON-encoded test per stdin line, prints `@@TEST i`, calls the
+ * candidate's global `solve(...)`, prints the result as canonical JSON
+ * (`@@RESULT ...`) plus per-test time (`@@TIME ...ms`). Malformed input
+ * yields `@@ERROR` — the harness never throws (exceptions are unavailable
+ * under WASI; see ADR 006).
+ *
+ * The candidate's code is prepended by buildCppSource(); it must define
+ * `solve(...)` at global scope and must NOT define `main` (duplicate mains
+ * fail the link with a clear compiler error).
+ */
+export function buildCppHarness(problem) {
+  const convLines = problem.params
+    .map((p, i) => {
+      const t = CPP_TYPES[p.type];
+      if (!t) throw new Error(`Unsupported C++ param type: ${p.type}`);
+      return `        ${t.decl} __h_a${i} = cppharness::${t.conv}(argv.a[${i}]);`;
+    })
+    .join('\n');
+  const callArgs = problem.params.map((_, i) => `__h_a${i}`).join(', ');
+  const rtype = CPP_TYPES[problem.returnType];
+  if (!rtype) throw new Error(`Unsupported C++ return type: ${problem.returnType}`);
+
+  return `// ================= generated C++ test harness (do not edit) =================
+namespace cppharness {
+
+struct JVal {
+    enum class T { Null, Bool, Int, Double, Str, Arr };
+    T type = T::Null;
+    bool b = false;
+    long long i = 0;
+    double d = 0.0;
+    std::string s;
+    std::vector<JVal> a;
+};
+
+// Minimal JSON parser for the v1 wire types. Defensive: never throws,
+// reports failure via okOut (WASI builds have no exceptions).
+struct Parser {
+    const std::string& src;
+    size_t pos = 0;
+    bool ok = true;
+    explicit Parser(const std::string& s) : src(s) {}
+    void ws() {
+        while (pos < src.size()) {
+            char c = src[pos];
+            if (c == ' ' || c == '\\t' || c == '\\n' || c == '\\r') pos++;
+            else break;
+        }
+    }
+    JVal parseValue() {
+        ws();
+        JVal v;
+        if (pos >= src.size()) { ok = false; return v; }
+        char c = src[pos];
+        if (c == '[') {
+            pos++;
+            v.type = JVal::T::Arr;
+            ws();
+            if (pos < src.size() && src[pos] == ']') { pos++; return v; }
+            while (true) {
+                v.a.push_back(parseValue());
+                if (!ok) return v;
+                ws();
+                if (pos < src.size() && src[pos] == ',') { pos++; continue; }
+                break;
+            }
+            ws();
+            if (pos >= src.size() || src[pos] != ']') { ok = false; return v; }
+            pos++;
+            return v;
+        }
+        if (c == '"') { v.type = JVal::T::Str; v.s = parseString(); return v; }
+        if (c == 't' && src.compare(pos, 4, "true") == 0) { pos += 4; v.type = JVal::T::Bool; v.b = true; return v; }
+        if (c == 'f' && src.compare(pos, 5, "false") == 0) { pos += 5; v.type = JVal::T::Bool; v.b = false; return v; }
+        if (c == 'n' && src.compare(pos, 4, "null") == 0) { pos += 4; v.type = JVal::T::Null; return v; }
+        size_t start = pos;
+        if (c == '-') pos++;
+        while (pos < src.size() && src[pos] >= '0' && src[pos] <= '9') pos++;
+        bool isDbl = false;
+        if (pos < src.size() && src[pos] == '.') {
+            isDbl = true; pos++;
+            while (pos < src.size() && src[pos] >= '0' && src[pos] <= '9') pos++;
+        }
+        if (pos < src.size() && (src[pos] == 'e' || src[pos] == 'E')) {
+            isDbl = true; pos++;
+            if (pos < src.size() && (src[pos] == '+' || src[pos] == '-')) pos++;
+            while (pos < src.size() && src[pos] >= '0' && src[pos] <= '9') pos++;
+        }
+        std::string num = src.substr(start, pos - start);
+        if (num.empty() || num == "-") { ok = false; return v; }
+        if (isDbl) { v.type = JVal::T::Double; v.d = strtod(num.c_str(), nullptr); }
+        else { v.type = JVal::T::Int; v.i = strtoll(num.c_str(), nullptr, 10); }
+        return v;
+    }
+    std::string parseString() {
+        std::string out;
+        pos++; // opening quote
+        while (pos < src.size()) {
+            char c = src[pos++];
+            if (c == '"') break;
+            if (c == '\\\\' && pos < src.size()) {
+                char e = src[pos++];
+                if (e == 'n') out += '\\n';
+                else if (e == 't') out += '\\t';
+                else if (e == 'r') out += '\\r';
+                else out += e;
+            } else {
+                out += c;
+            }
+        }
+        return out;
+    }
+};
+
+inline JVal parseJson(const std::string& s, bool& okOut) {
+    Parser p(s);
+    JVal v = p.parseValue();
+    p.ws();
+    okOut = p.ok && p.pos == s.size();
+    return v;
+}
+
+// ---- converters: JSON value -> concrete C++ type ----
+inline int as_int(const JVal& v) { return (int)v.i; }
+inline double as_double(const JVal& v) { return v.type == JVal::T::Double ? v.d : (double)v.i; }
+inline bool as_bool(const JVal& v) { return v.b; }
+inline std::string as_str(const JVal& v) { return v.s; }
+inline std::vector<int> as_vec_int(const JVal& v) {
+    std::vector<int> o; o.reserve(v.a.size());
+    for (const auto& e : v.a) o.push_back((int)e.i);
+    return o;
+}
+inline std::vector<double> as_vec_double(const JVal& v) {
+    std::vector<double> o; o.reserve(v.a.size());
+    for (const auto& e : v.a) o.push_back(e.type == JVal::T::Double ? e.d : (double)e.i);
+    return o;
+}
+inline std::vector<bool> as_vec_bool(const JVal& v) {
+    std::vector<bool> o; o.reserve(v.a.size());
+    for (const auto& e : v.a) o.push_back(e.b);
+    return o;
+}
+inline std::vector<std::string> as_vec_string(const JVal& v) {
+    std::vector<std::string> o; o.reserve(v.a.size());
+    for (const auto& e : v.a) o.push_back(e.s);
+    return o;
+}
+inline std::vector<std::vector<int>> as_vec_vec_int(const JVal& v) {
+    std::vector<std::vector<int>> o; o.reserve(v.a.size());
+    for (const auto& e : v.a) o.push_back(as_vec_int(e));
+    return o;
+}
+inline std::vector<std::vector<double>> as_vec_vec_double(const JVal& v) {
+    std::vector<std::vector<double>> o; o.reserve(v.a.size());
+    for (const auto& e : v.a) o.push_back(as_vec_double(e));
+    return o;
+}
+
+// ---- canonical printers: C++ value -> JSON text ----
+inline std::string print(int v) { return std::to_string(v); }
+inline std::string print(double v) {
+    std::ostringstream o;
+    o << std::setprecision(17) << v;
+    return o.str();
+}
+inline std::string print(bool v) { return v ? "true" : "false"; }
+inline std::string print(const std::string& v) {
+    std::string o = "\\"";
+    for (char c : v) {
+        if (c == '"') o += "\\\\\\"";
+        else if (c == '\\\\') o += "\\\\\\\\";
+        else if (c == '\\n') o += "\\\\n";
+        else if (c == '\\t') o += "\\\\t";
+        else if (c == '\\r') o += "\\\\r";
+        else o += c;
+    }
+    o += "\\"";
+    return o;
+}
+template <typename T>
+std::string print(const std::vector<T>& v) {
+    std::string o = "[";
+    for (size_t k = 0; k < v.size(); k++) {
+        if (k) o += ",";
+        o += print(v[k]);
+    }
+    o += "]";
+    return o;
+}
+inline std::string print(const std::vector<bool>& v) {
+    std::string o = "[";
+    for (size_t k = 0; k < v.size(); k++) {
+        if (k) o += ",";
+        o += v[k] ? "true" : "false";
+    }
+    o += "]";
+    return o;
+}
+
+} // namespace cppharness
+
+int main() {
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+    std::string line;
+    int idx = 0;
+    // One JSON-encoded test per stdin line; the browser feeds tests and
+    // compares results. EOF ends the run.
+    while (std::getline(std::cin, line)) {
+        std::cout << "@@TEST " << idx << "\\n" << std::flush;
+        bool ok = false;
+        cppharness::JVal argv = cppharness::parseJson(line, ok);
+        if (!ok || argv.type != cppharness::JVal::T::Arr ||
+            argv.a.size() != ${problem.params.length}) {
+            std::cout << "@@ERROR bad test input\\n" << std::flush;
+            idx++;
+            continue;
+        }
+        auto t0 = std::chrono::steady_clock::now();
+${convLines}
+        ${rtype.decl} __h_r = ::solve(${callArgs});
+        std::string __h_result = cppharness::print(__h_r);
+        auto t1 = std::chrono::steady_clock::now();
+        std::cout << "@@RESULT " << __h_result << "\\n";
+        std::cout << "@@TIME "
+                  << std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count()
+                  << "\\n" << std::flush;
+        idx++;
+    }
+    return 0;
+}
+`;
+}
+
+/**
+ * Assemble the complete C++ translation unit: shim include, the
+ * candidate's code (must define `solve(...)`, must not define `main`),
+ * then the generated harness.
+ */
+export function buildCppSource(problem, candidateCode) {
+  return (
+    '#include <bits/stdc++.h>\n' +
+    'using namespace std;\n\n' +
+    candidateCode +
+    '\n\n' +
+    buildCppHarness(problem)
+  );
+}
+
+/** Encode one test's args as the single stdin line the harness expects. */
+export function cppStdinForTest(test) {
+  return JSON.stringify(test.args);
+}
+
+/**
+ * Parse the harness marker protocol from captured stdout.
+ * Returns { result, timeMs, error } where result is the JSON-parsed
+ * @@RESULT payload (undefined when the test errored or never printed).
+ */
+export function parseCppMarkers(stdoutText) {
+  let result;
+  let timeMs;
+  let error;
+  for (const rawLine of String(stdoutText).split('\n')) {
+    const line = rawLine.replace(/\r$/, '');
+    if (line.startsWith('@@RESULT ')) {
+      try {
+        result = JSON.parse(line.slice('@@RESULT '.length));
+      } catch {
+        error = 'Harness printed unparseable output.';
+      }
+    } else if (line.startsWith('@@TIME ')) {
+      const n = parseInt(line.slice('@@TIME '.length), 10);
+      if (Number.isFinite(n)) timeMs = n;
+    } else if (line.startsWith('@@ERROR ')) {
+      error = line.slice('@@ERROR '.length) || 'Harness error.';
+    }
+  }
+  return { result, timeMs, error };
+}

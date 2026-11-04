@@ -4,8 +4,9 @@
  * Language-agnostic problem format (spec §4.8): each problem declares its
  * function signature, parameter/return types, comparison mode, and tests as
  * JSON {args, expected}. The JavaScript and Python runners call the
- * candidate's `solve(...)` directly, so all languages run identical tests.
- * M6's offline problem pipeline will reuse this exact format.
+ * candidate's `solve(...)` directly; the C++ runner (M5) compiles a generated
+ * harness that calls the candidate's `solve(...)` — so all languages run
+ * identical tests. M6's offline problem pipeline will reuse this exact format.
  *
  * v1 types: int, float, bool, string, and 1D/2D arrays of those.
  * Comparison modes: 'exact' | 'float' (tolerance) | 'unordered' (arrays).
@@ -14,7 +15,7 @@
  * only the first failing *visible* test reveals input/expected/got.
  */
 
-export const LANGUAGES = ['javascript', 'python'];
+export const LANGUAGES = ['javascript', 'python', 'cpp'];
 
 export const PROBLEMS = [
   {
@@ -54,6 +55,8 @@ export const PROBLEMS = [
         '/**\n * @param {number[]} nums\n * @param {number} target\n * @return {number[]}\n */\nfunction solve(nums, target) {\n  // your code here\n}\n',
       python:
         'def solve(nums, target):\n    """\n    nums: list[int], target: int -> list[int]\n    """\n    # your code here\n    pass\n',
+      cpp:
+        '#include <bits/stdc++.h>\n\nstd::vector<int> solve(std::vector<int> nums, int target) {\n    // your code here\n    return {};\n}\n',
     },
     hints: [
       'A brute-force double loop checks every pair — O(n²). Can you do better?',
@@ -95,6 +98,8 @@ export const PROBLEMS = [
         '/**\n * @param {string} s\n * @return {boolean}\n */\nfunction solve(s) {\n  // your code here\n}\n',
       python:
         'def solve(s):\n    """\n    s: str -> bool\n    """\n    # your code here\n    pass\n',
+      cpp:
+        '#include <bits/stdc++.h>\n\nbool solve(std::string s) {\n    // your code here\n    return false;\n}\n',
     },
     hints: [
       'Which data structure naturally models "most recently opened, first closed"?',
@@ -126,6 +131,8 @@ export const PROBLEMS = [
         '/**\n * @param {string} s\n * @return {string}\n */\nfunction solve(s) {\n  // your code here\n}\n',
       python:
         'def solve(s):\n    """\n    s: str -> str\n    """\n    # your code here\n    pass\n',
+      cpp:
+        '#include <bits/stdc++.h>\n\nstd::string solve(std::string s) {\n    // your code here\n    return "";\n}\n',
     },
     hints: ['Two pointers from both ends work in O(1) extra space.'],
   },
@@ -160,6 +167,8 @@ export const PROBLEMS = [
         '/**\n * @param {number[]} nums\n * @return {boolean}\n */\nfunction solve(nums) {\n  // your code here\n}\n',
       python:
         'def solve(nums):\n    """\n    nums: list[int] -> bool\n    """\n    # your code here\n    pass\n',
+      cpp:
+        '#include <bits/stdc++.h>\n\nbool solve(std::vector<int> nums) {\n    // your code here\n    return false;\n}\n',
     },
     hints: [
       'Sorting first makes duplicates adjacent — O(n log n).',
