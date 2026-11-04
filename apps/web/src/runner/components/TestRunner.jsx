@@ -42,7 +42,7 @@ function StatusDot({ status }) {
   return <span className={`inline-block h-2.5 w-2.5 rounded-full ${color}`} aria-hidden="true" />;
 }
 
-export default function TestRunner({ problem, code, language, showFirstFailure = true }) {
+export default function TestRunner({ problem, code, language, showFirstFailure = true, onResults }) {
   const [phase, setPhase] = useState('idle'); // idle | running | done
   const [results, setResults] = useState([]);
   const [summary, setSummary] = useState(null);
@@ -84,6 +84,12 @@ export default function TestRunner({ problem, code, language, showFirstFailure =
       setSummary(out);
       setPhase('done');
       setProgress(null);
+      // M8: let embedders (the interview view) capture the outcome.
+      try {
+        onResults?.(out);
+      } catch {
+        /* a throwing callback must never break the results display */
+      }
     } catch (err) {
       if (runId.current !== id) return;
       setRunError(err?.message || String(err));

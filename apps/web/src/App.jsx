@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { pingHealth, apiBase } from './api.js';
 import SampleReport from './views/SampleReport.jsx';
 import IntakeFlow from './views/IntakeFlow.jsx';
+import Interview from './views/Interview.jsx';
 import Playground from './runner/components/Playground.jsx';
 
 /**
@@ -40,7 +41,7 @@ function BackendStatus({ health, error }) {
 export default function App() {
   const [health, setHealth] = useState(null);
   const [status, setStatus] = useState('checking'); // 'checking' | 'online' | 'waking'
-  const [choice, setChoice] = useState(null); // null | 'sample' | 'own' | 'playground'
+  const [choice, setChoice] = useState(null); // null | 'sample' | 'own' | 'playground' | 'interview'
 
   useEffect(() => {
     let cancelled = false;
@@ -72,7 +73,10 @@ export default function App() {
     return <SampleReport onBack={() => setChoice(null)} />;
   }
   if (choice === 'own') {
-    return <IntakeFlow onBack={() => setChoice(null)} />;
+    return <IntakeFlow onBack={() => setChoice(null)} onStartInterview={() => setChoice('interview')} />;
+  }
+  if (choice === 'interview') {
+    return <Interview onBack={() => setChoice(null)} />;
   }
   if (choice === 'playground') {
     return <Playground onBack={() => setChoice(null)} />;

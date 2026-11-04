@@ -74,3 +74,51 @@ export async function getProblem(slug) {
   const { problems } = await listProblems();
   return problems.find((p) => p.slug === slug) || null;
 }
+
+// Full bank (WITH solutions) for server-side use only — the approach judge
+// needs the reference solution. Mongo stores the full document in `data`;
+// the repo-root data/problems.json is the full bank file.
+const FULL_BANK = path.resolve(HERE, '..', '..', '..', '..', 'data', 'problems.json');
+let fullBankCache = null;
+function loadFullBank() {
+  if (fullBankCache) return fullBankCache;
+  if (!existsSync(FULL_BANK)) return [];
+  try {
+    const raw = JSON.parse(readFileSync(FULL_BANK, 'utf8'));
+    fullBankCache = Array.isArray(raw.problems) ? raw.problems : [];
+  } catch {
+    fullBankCache = [];
+  }
+  return fullBankCache;
+}
+
+/**
+ * Get the FULL problem (including reference/oracle/wrong solutions and the
+ * complete hint ladder) by slug. SERVER-SIDE ONLY — never send this to a
+ * client. Used by the M8 approach judge.
+ */
+export async function getFullProblem(slug) {
+  const Model = problemModel();
+  if (Model) {
+    try {
+      const doc = await Model.findOne({ slug }).lean();
+      if (doc?.data) return doc.data;
+    } catch {
+      // Fall through to the bundled full bank.
+    }
+  }
+  return loadFullBank().find((p) => p.slug === slug) || null;
+}
+
+/**
+ * Client-safe projection for the INTERVIEW (stricter than toClientProblem):
+ * the full precomputed hint ladder is stripped — hints are served one at a
+ * time by POST /api/interview/approach. Solutions are already stripped by
+ * toClientProblem; this additionally removes `hints`.
+ */
+export function toClientSafeDsaProblem(full) {
+  if (!full) return null;
+  const client = toClientProblem(full);
+  const { hints: _hints, ...rest } = client;
+  return rest;
+}

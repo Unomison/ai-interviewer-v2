@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "count": 52,
   "problems": [
     {
@@ -39,7 +39,7 @@
         "hash-map"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 3310,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -285,7 +285,7 @@
         "two-pointers"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 2080,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -378,7 +378,7 @@
         "hash-map"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 2440,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -20600,7 +20600,10 @@
         "python": "def solve(prices: list[int]) -> int:\n    \"\"\"\n    prices: list[int] -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(std::vector<int> prices) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "A brute-force double loop checks every buy/sell pair — O(n²). As you scan left to right, what single value about the past would let you evaluate today?",
+        "Track the lowest price seen so far; the best profit ending today is just today’s price minus that minimum."
+      ],
       "id": "best-time-to-buy-sell-stock"
     },
     {
@@ -20635,7 +20638,7 @@
         "dp"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 2530,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -70728,7 +70731,10 @@
         "python": "def solve(nums: list[int]) -> int:\n    \"\"\"\n    nums: list[int] -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(std::vector<int> nums) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Brute force checks every subarray — O(n²). At each position you only need one decision: extend the previous subarray or start fresh here.",
+        "Keep a running sum; when it goes negative, reset it — a negative prefix can never help a future subarray."
+      ],
       "id": "maximum-subarray"
     },
     {
@@ -70762,7 +70768,7 @@
         "arrays"
       ],
       "difficulty": "medium",
-      "timeLimitMs": 2150,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -70862,7 +70868,10 @@
         "python": "def solve(nums: list[int]) -> list[int]:\n    \"\"\"\n    nums: list[int] -> list[int]\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nstd::vector<int> solve(std::vector<int> nums) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Division is off the table. For each position, the answer is (product of everything to the left) × (product of everything to the right).",
+        "Two passes: first write the left-products into the answer, then multiply by a running right-product — O(n) time, O(1) extra space."
+      ],
       "id": "product-except-self"
     },
     {
@@ -70900,7 +70909,7 @@
         "arrays"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 2930,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -71016,7 +71025,10 @@
         "python": "def solve(nums: list[int], k: int) -> list[int]:\n    \"\"\"\n    nums: list[int], k: int -> list[int]\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nstd::vector<int> solve(std::vector<int> nums, int k) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Try the O(n)-space version first: each element moves to index (i + k) % n. Then think about doing it in place.",
+        "Reversing is your friend: reverse the whole array, then reverse the first k elements and the rest separately."
+      ],
       "id": "rotate-array"
     },
     {
@@ -71046,7 +71058,7 @@
         "two-pointers"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 2970,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -71158,7 +71170,10 @@
         "python": "def solve(nums: list[int]) -> list[int]:\n    \"\"\"\n    nums: list[int] -> list[int]\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nstd::vector<int> solve(std::vector<int> nums) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "You need non-zeroes first, order preserved, in place. Imagine a write pointer that only advances when you see a non-zero value.",
+        "One pass: copy each non-zero to the write index and bump it; when the scan ends, fill the tail with zeroes."
+      ],
       "id": "move-zeroes"
     },
     {
@@ -71191,7 +71206,7 @@
         "arrays"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 3130,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -71277,7 +71292,10 @@
         "python": "def solve(nums: list[int]) -> int:\n    \"\"\"\n    nums: list[int] -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(std::vector<int> nums) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Sorting works — O(n log n). Can you do it in one pass with O(1) space?",
+        "Boyer–Moore voting: keep a candidate and a count; same value → count++, different → count−−. The true majority always survives."
+      ],
       "id": "majority-element"
     },
     {
@@ -71312,7 +71330,7 @@
         "math"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 2150,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -71443,7 +71461,10 @@
         "python": "def solve(digits: list[int]) -> list[int]:\n    \"\"\"\n    digits: list[int] -> list[int]\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nstd::vector<int> solve(std::vector<int> digits) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Walk from the last digit: a 9 becomes 0 and carries, anything else just increments and you are done.",
+        "The only tricky case is all 9s — then the answer is a 1 followed by zeroes, one digit longer than the input."
+      ],
       "id": "plus-one"
     },
     {
@@ -71476,7 +71497,7 @@
         "arrays"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 2890,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -71586,7 +71607,9 @@
         "python": "def solve(nums: list[int]) -> list[int]:\n    \"\"\"\n    nums: list[int] -> list[int]\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nstd::vector<int> solve(std::vector<int> nums) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Each answer[i] is just answer[i−1] + nums[i]. One pass, O(1) extra space beyond the output."
+      ],
       "id": "running-sum"
     },
     {
@@ -71624,7 +71647,7 @@
         "two-pointers"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 2100,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -71746,7 +71769,10 @@
         "python": "def solve(a: list[int], b: list[int]) -> list[int]:\n    \"\"\"\n    a: list[int], b: list[int] -> list[int]\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nstd::vector<int> solve(std::vector<int> a, std::vector<int> b) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Merging from the front overwrites values you have not processed yet. Where is the guaranteed empty space?",
+        "Fill from the back: two pointers at the ends of the valid regions, write the larger one at the tail and move backwards."
+      ],
       "id": "merge-sorted-array"
     },
     {
@@ -71891,7 +71917,10 @@
         "python": "def solve(nums: list[int]) -> list[int]:\n    \"\"\"\n    nums: list[int] -> list[int]\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nstd::vector<int> solve(std::vector<int> nums) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Two pointers: one scans every element, one marks where the next kept value goes.",
+        "The array is sorted, so duplicates sit together — copy a value forward only when it differs from the previous one."
+      ],
       "id": "remove-duplicates-sorted"
     },
     {
@@ -72008,7 +72037,10 @@
         "python": "def solve(nums: list[int]) -> int:\n    \"\"\"\n    nums: list[int] -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(std::vector<int> nums) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Sorting and scanning works. Can you use arithmetic instead of ordering?",
+        "Sum of 0..n minus the array’s actual sum is the missing number — equivalently, XOR everything together."
+      ],
       "id": "missing-number"
     },
     {
@@ -72042,7 +72074,7 @@
         "two-pointers"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 3550,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -72148,7 +72180,10 @@
         "python": "def solve(nums: list[int]) -> list[int]:\n    \"\"\"\n    nums: list[int] -> list[int]\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nstd::vector<int> solve(std::vector<int> nums) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Squaring then sorting is O(n log n). After squaring, where do the largest values come from in a sorted array?",
+        "Two pointers at both ends; write the larger square at the back of the answer and move inward."
+      ],
       "id": "squares-of-sorted-array"
     },
     {
@@ -72239,7 +72274,9 @@
         "python": "def solve(s: str) -> bool:\n    \"\"\"\n    s: str -> bool\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nbool solve(std::string s) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Ignore (or skip in place) anything that is not a letter or digit, then compare from both ends toward the middle."
+      ],
       "id": "valid-palindrome"
     },
     {
@@ -72278,7 +72315,7 @@
         "hash-map"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 2880,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -72340,7 +72377,9 @@
         "python": "def solve(s: str, t: str) -> bool:\n    \"\"\"\n    s: str, t: str -> bool\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nbool solve(std::string s, std::string t) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Two strings are anagrams exactly when their character counts match — one hash map (or a 26-slot array) does it in a single pass."
+      ],
       "id": "valid-anagram"
     },
     {
@@ -72374,7 +72413,7 @@
         "strings"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 3870,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -72450,7 +72489,10 @@
         "python": "def solve(strs: list[str]) -> str:\n    \"\"\"\n    strs: list[str] -> str\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nstd::string solve(std::vector<std::string> strs) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Compare character by character across all strings and stop at the first mismatch.",
+        "Alternative: sort the array — then you only ever need to compare the first and last strings."
+      ],
       "id": "longest-common-prefix"
     },
     {
@@ -72540,7 +72582,9 @@
         "python": "def solve(s: str) -> int:\n    \"\"\"\n    s: str -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(std::string s) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Skip trailing spaces first, then count characters until the next space. One right-to-left pass."
+      ],
       "id": "length-of-last-word"
     },
     {
@@ -72575,7 +72619,7 @@
         "two-pointers"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 2140,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -72631,7 +72675,9 @@
         "python": "def solve(s: str) -> str:\n    \"\"\"\n    s: str -> str\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nstd::string solve(std::string s) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Split on whitespace, drop the empties, reverse the word list, and rejoin with single spaces."
+      ],
       "id": "reverse-words-in-string"
     },
     {
@@ -72726,7 +72772,9 @@
         "python": "def solve(s: str) -> int:\n    \"\"\"\n    s: str -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(std::string s) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Count every character in a first pass, then scan once more for the first character whose count is 1."
+      ],
       "id": "first-unique-character"
     },
     {
@@ -72764,7 +72812,7 @@
         "hash-map"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 2040,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -72826,7 +72874,9 @@
         "python": "def solve(ransomNote: str, magazine: str) -> bool:\n    \"\"\"\n    ransomNote: str, magazine: str -> bool\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nbool solve(std::string ransomNote, std::string magazine) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Count the magazine’s letters, then consume one per ransom-note letter — if any count runs out, the answer is false."
+      ],
       "id": "ransom-note"
     },
     {
@@ -72868,7 +72918,7 @@
         "hash-map"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 3990,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -72930,7 +72980,9 @@
         "python": "def solve(s: str, t: str) -> bool:\n    \"\"\"\n    s: str, t: str -> bool\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nbool solve(std::string s, std::string t) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Map s→t as you scan, but also enforce the reverse: two different s-characters must never map to the same t-character."
+      ],
       "id": "isomorphic-strings"
     },
     {
@@ -72969,7 +73021,7 @@
         "hash-map"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 3350,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -73025,7 +73077,9 @@
         "python": "def solve(s: str) -> int:\n    \"\"\"\n    s: str -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(std::string s) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Scan left to right: when a symbol is smaller than the one after it, subtract it; otherwise add it."
+      ],
       "id": "roman-to-integer"
     },
     {
@@ -73063,7 +73117,7 @@
         "math"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 4380,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -73125,7 +73179,9 @@
         "python": "def solve(num1: str, num2: str) -> str:\n    \"\"\"\n    num1: str, num2: str -> str\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nstd::string solve(std::string num1, std::string num2) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Add digit by digit from the right with a carry, exactly like paper addition — build the answer reversed, then flip it."
+      ],
       "id": "add-strings"
     },
     {
@@ -73160,7 +73216,7 @@
         "two-pointers"
       ],
       "difficulty": "medium",
-      "timeLimitMs": 2780,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -73287,7 +73343,10 @@
         "python": "def solve(height: list[int]) -> int:\n    \"\"\"\n    height: list[int] -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(std::vector<int> height) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Brute force tries every pair — O(n²). The area is limited by the shorter line, so start with the widest container and move inward.",
+        "Two pointers at the ends; always move the shorter side — moving the taller side can never improve the area."
+      ],
       "id": "container-with-most-water"
     },
     {
@@ -73322,7 +73381,7 @@
         "sorting"
       ],
       "difficulty": "medium",
-      "timeLimitMs": 2160,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -73467,7 +73526,10 @@
         "python": "def solve(nums: list[int]) -> list[list[int]]:\n    \"\"\"\n    nums: list[int] -> list[list[int]]\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nstd::vector<std::vector<int>> solve(std::vector<int> nums) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Sort first. Then fix one element and solve two-sum on the rest — with two pointers, since the array is sorted.",
+        "Skip duplicate values at each position so every triplet is reported exactly once."
+      ],
       "id": "3sum"
     },
     {
@@ -73505,7 +73567,7 @@
         "two-pointers"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 2970,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -73616,7 +73678,9 @@
         "python": "def solve(numbers: list[int], target: int) -> list[int]:\n    \"\"\"\n    numbers: list[int], target: int -> list[int]\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nstd::vector<int> solve(std::vector<int> numbers, int target) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "The input is sorted, so no hash map is needed: two pointers from both ends, moving based on whether the sum is too big or too small."
+      ],
       "id": "two-sum-ii-sorted"
     },
     {
@@ -73753,7 +73817,9 @@
         "python": "def solve(nums: list[int], val: int) -> list[int]:\n    \"\"\"\n    nums: list[int], val: int -> list[int]\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nstd::vector<int> solve(std::vector<int> nums, int val) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Same shape as remove-duplicates: a write pointer keeps every value that is not val, preserving order."
+      ],
       "id": "remove-element"
     },
     {
@@ -73788,7 +73854,7 @@
         "sliding-window"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 3040,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -73876,7 +73942,9 @@
         "python": "def solve(nums: list[int], k: int) -> float:\n    \"\"\"\n    nums: list[int], k: int -> float\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\ndouble solve(std::vector<int> nums, int k) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Recomputing each window’s sum from scratch is O(n·k). Slide instead: subtract the element leaving the window, add the one entering."
+      ],
       "id": "max-average-subarray-i"
     },
     {
@@ -73978,7 +74046,10 @@
         "python": "def solve(s: str) -> int:\n    \"\"\"\n    s: str -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(std::string s) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Keep a window [left, right] plus a set of seen characters. When s[right] repeats, shrink from the left until the window is unique again.",
+        "Track each character’s last index in a map so you can jump left forward in one step instead of shrinking one by one."
+      ],
       "id": "longest-substring-without-repeating"
     },
     {
@@ -74021,7 +74092,7 @@
         "sliding-window"
       ],
       "difficulty": "medium",
-      "timeLimitMs": 3110,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -74119,7 +74190,9 @@
         "python": "def solve(target: int, nums: list[int]) -> int:\n    \"\"\"\n    target: int, nums: list[int] -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(int target, std::vector<int> nums) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Expand the right edge adding values; once the sum reaches the target, shrink the left edge while recording the smallest window. Each index moves at most twice — O(n)."
+      ],
       "id": "minimum-size-subarray-sum"
     },
     {
@@ -74162,7 +74235,7 @@
         "sliding-window"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 3140,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -74253,7 +74326,9 @@
         "python": "def solve(nums: list[int], k: int) -> bool:\n    \"\"\"\n    nums: list[int], k: int -> bool\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nbool solve(std::vector<int> nums, int k) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "A set holds the current window of size k. For each number: if it is already in the set → true; add it; then drop the element that fell k behind."
+      ],
       "id": "contains-duplicate-ii"
     },
     {
@@ -74287,7 +74362,7 @@
         "stack"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 2690,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -74371,7 +74446,9 @@
         "python": "def solve(ops: list[str]) -> int:\n    \"\"\"\n    ops: list[str] -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(std::vector<std::string> ops) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Simulate with a stack of scores: a number pushes, \"C\" pops, \"D\" pushes double the top, \"+\" pushes the sum of the top two."
+      ],
       "id": "baseball-game"
     },
     {
@@ -74414,7 +74491,7 @@
         "two-pointers"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 3820,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -74476,7 +74553,9 @@
         "python": "def solve(s: str, t: str) -> bool:\n    \"\"\"\n    s: str, t: str -> bool\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nbool solve(std::string s, std::string t) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Build each final string with a stack (push characters, pop on \"#\") and compare — or do it in O(1) space scanning from the ends with skip counters."
+      ],
       "id": "backspace-string-compare"
     },
     {
@@ -74669,7 +74748,10 @@
         "python": "def solve(nums1: list[int], nums2: list[int]) -> list[int]:\n    \"\"\"\n    nums1: list[int], nums2: list[int] -> list[int]\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nstd::vector<int> solve(std::vector<int> nums1, std::vector<int> nums2) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "For each element, the answer is the first larger value to its right — a stack scanning right-to-left finds all of them in O(n).",
+        "Pop smaller elements off the stack; whatever remains on top (if anything) is the next greater. Store answers in a map for the queries."
+      ],
       "id": "next-greater-element-i"
     },
     {
@@ -74708,7 +74790,7 @@
         "binary-search"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 3500,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -74801,7 +74883,9 @@
         "python": "def solve(nums: list[int], target: int) -> int:\n    \"\"\"\n    nums: list[int], target: int -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(std::vector<int> nums, int target) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Halve the search space each step: compare mid with the target and discard the wrong half. Write mid as lo + (hi − lo)/2 to avoid overflow."
+      ],
       "id": "binary-search"
     },
     {
@@ -74844,7 +74928,7 @@
         "binary-search"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 2910,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -74933,7 +75017,9 @@
         "python": "def solve(nums: list[int], target: int) -> int:\n    \"\"\"\n    nums: list[int], target: int -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(std::vector<int> nums, int target) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "It is binary search where the answer is the insertion point: when the loop ends without a hit, return lo."
+      ],
       "id": "search-insert-position"
     },
     {
@@ -74967,7 +75053,7 @@
         "binary-search"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 2660,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -75030,7 +75116,9 @@
         "python": "def solve(x: int) -> int:\n    \"\"\"\n    x: int -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(int x) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Binary search the answer itself: find the largest m with m·m ≤ x. Compare with m ≤ x/m to avoid overflow."
+      ],
       "id": "sqrtx"
     },
     {
@@ -75069,7 +75157,7 @@
         "binary-search"
       ],
       "difficulty": "medium",
-      "timeLimitMs": 2450,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -75168,7 +75256,9 @@
         "python": "def solve(nums: list[int]) -> int:\n    \"\"\"\n    nums: list[int] -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(std::vector<int> nums) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Binary search still works, but the rotation breaks the order: compare mid with the rightmost element to decide which half holds the minimum."
+      ],
       "id": "find-min-rotated"
     },
     {
@@ -75204,7 +75294,7 @@
         "two-pointers"
       ],
       "difficulty": "medium",
-      "timeLimitMs": 3850,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -75340,7 +75430,9 @@
         "python": "def solve(nums: list[int]) -> list[int]:\n    \"\"\"\n    nums: list[int] -> list[int]\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nstd::vector<int> solve(std::vector<int> nums) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Counting the 0s, 1s and 2s then rewriting is the easy two-pass version. For one pass, use the Dutch-flag: three regions maintained with lo/mid/hi pointers."
+      ],
       "id": "sort-colors"
     },
     {
@@ -75378,7 +75470,7 @@
         "sorting"
       ],
       "difficulty": "medium",
-      "timeLimitMs": 2010,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -75474,7 +75566,9 @@
         "python": "def solve(nums: list[int], k: int) -> int:\n    \"\"\"\n    nums: list[int], k: int -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(std::vector<int> nums, int k) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Sorting is O(n log n) and perfectly acceptable, but a min-heap of size k gives O(n log k) — evict the smallest whenever the heap grows past k."
+      ],
       "id": "kth-largest-element"
     },
     {
@@ -75512,7 +75606,7 @@
         "sorting"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 5780,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -75608,7 +75702,9 @@
         "python": "def solve(heights: list[int]) -> int:\n    \"\"\"\n    heights: list[int] -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(std::vector<int> heights) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Sort a copy of the array, then count the positions where the original differs from the sorted version."
+      ],
       "id": "height-checker"
     },
     {
@@ -75710,7 +75806,9 @@
         "python": "def solve(n: int) -> int:\n    \"\"\"\n    n: int -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(int n) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Naive recursion recomputes the same values exponentially many times. Memoize the results — or just iterate with two variables for O(n) time and O(1) space."
+      ],
       "id": "fibonacci"
     },
     {
@@ -75744,7 +75842,7 @@
         "dp"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 2900,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -75800,7 +75898,9 @@
         "python": "def solve(n: int) -> int:\n    \"\"\"\n    n: int -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(int n) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "To reach step n you must have come from n−1 or n−2, so ways(n) = ways(n−1) + ways(n−2). It is the Fibonacci sequence in disguise."
+      ],
       "id": "climbing-stairs"
     },
     {
@@ -75837,7 +75937,7 @@
         "math"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 2810,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -75893,7 +75993,9 @@
         "python": "def solve(x: int) -> bool:\n    \"\"\"\n    x: int -> bool\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nbool solve(int x) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Reversing the whole number risks overflow. Reverse only half the digits, then compare the halves (dropping the middle digit for odd lengths)."
+      ],
       "id": "palindrome-number"
     },
     {
@@ -75930,7 +76032,7 @@
         "math"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 3040,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -75986,7 +76088,9 @@
         "python": "def solve(x: int) -> int:\n    \"\"\"\n    x: int -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(int x) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Pop digits with % 10 and append them to the answer — but check for overflow *before* multiplying by 10 (compare against INT_MAX/10)."
+      ],
       "id": "reverse-integer"
     },
     {
@@ -76118,7 +76222,9 @@
         "python": "def solve(n: int) -> list[str]:\n    \"\"\"\n    n: int -> list[str]\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nstd::vector<std::string> solve(int n) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Test divisibility by 3 and 5 for each number; handle the both-divisible case (15) explicitly, or build each string from the two checks."
+      ],
       "id": "fizz-buzz"
     },
     {
@@ -76152,7 +76258,7 @@
         "math"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 3980,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -76245,7 +76351,9 @@
         "python": "def solve(nums: list[int]) -> int:\n    \"\"\"\n    nums: list[int] -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(std::vector<int> nums) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "XOR cancels pairs (a ^ a = 0), so XORing the whole array leaves exactly the single number — O(n) time, O(1) space."
+      ],
       "id": "single-number"
     },
     {
@@ -76282,7 +76390,7 @@
         "math"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 2790,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -76345,7 +76453,9 @@
         "python": "def solve(n: int) -> bool:\n    \"\"\"\n    n: int -> bool\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nbool solve(int n) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Powers of two have exactly one bit set: n > 0 && (n & (n − 1)) === 0."
+      ],
       "id": "power-of-two"
     },
     {
@@ -76379,7 +76489,7 @@
         "dp"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 4920,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -76466,7 +76576,9 @@
         "python": "def solve(n: int) -> list[int]:\n    \"\"\"\n    n: int -> list[int]\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nstd::vector<int> solve(int n) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "The popcount of i relates to i/2: bits[i] = bits[i >> 1] + (i & 1). Fill the array in one increasing pass — no per-number loop."
+      ],
       "id": "counting-bits"
     }
   ]

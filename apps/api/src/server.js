@@ -20,6 +20,7 @@ import intakeRouter, { intakeErrorHandler } from './routes/intake.js';
 import sampleRouter from './routes/sample.js';
 import problemsRouter from './routes/problems.js';
 import researchRouter from './routes/research.js';
+import interviewRouter from './routes/interview.js';
 
 dotenv.config();
 
@@ -54,6 +55,7 @@ app.use('/api', intakeRouter);
 app.use('/api', sampleRouter);
 app.use('/api', problemsRouter);
 app.use('/api', researchRouter);
+app.use('/api', interviewRouter);
 
 // IntakeError (friendly 4xx) → JSON before the generic 404.
 app.use('/api', intakeErrorHandler);

@@ -82,3 +82,54 @@ export function deleteMyData(token) {
 export function fetchSampleReport() {
   return request('/api/sample/ats-report', { timeoutMs: 15000 });
 }
+
+/* --- Milestone 8: interview engine ---------------------------------------- */
+
+export function startInterview(intakeToken) {
+  return request('/api/interview/start', {
+    method: 'POST',
+    body: { intakeToken },
+    timeoutMs: 180000, // research (≤60s) + planner + intro turn
+  });
+}
+
+export function interviewTurn(sessionToken, text) {
+  return request('/api/interview/turn', {
+    method: 'POST',
+    body: { sessionToken, text },
+    timeoutMs: 120000,
+  });
+}
+
+export function getInterviewState(sessionToken) {
+  return request(`/api/interview/state?token=${encodeURIComponent(sessionToken)}`, {
+    timeoutMs: 15000,
+  });
+}
+
+export function submitApproach(sessionToken, problemSlug, approachText) {
+  return request('/api/interview/approach', {
+    method: 'POST',
+    body: { sessionToken, problemSlug, approachText },
+    timeoutMs: 120000,
+  });
+}
+
+export function submitDsaResult(sessionToken, problemSlug, language, code, results) {
+  return request('/api/interview/dsa-result', {
+    method: 'POST',
+    body: {
+      sessionToken,
+      problemSlug,
+      language,
+      code,
+      results: {
+        verdict: results.verdict,
+        passed: results.passed,
+        total: results.total,
+        firstFailure: results.firstFailure || null,
+      },
+    },
+    timeoutMs: 120000,
+  });
+}

@@ -1,6 +1,6 @@
 {
-  "version": "1.0.0",
-  "generatedAt": "2026-11-04T12:05:14.802Z",
+  "version": "1.1.0",
+  "generatedAt": "2026-11-04T13:22:47.122Z",
   "count": 52,
   "problems": [
     {
@@ -40,7 +40,7 @@
         "hash-map"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 3310,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -316,7 +316,7 @@
         "two-pointers"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 2080,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -424,7 +424,7 @@
         "hash-map"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 2440,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -20661,7 +20661,10 @@
         "python": "def solve(prices: list[int]) -> int:\n    \"\"\"\n    prices: list[int] -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(std::vector<int> prices) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "A brute-force double loop checks every buy/sell pair — O(n²). As you scan left to right, what single value about the past would let you evaluate today?",
+        "Track the lowest price seen so far; the best profit ending today is just today’s price minus that minimum."
+      ],
       "reference": {
         "javascript": "function solve(prices) {\n  let best = 0, low = Infinity;\n  for (const p of prices) {\n    if (p < low) low = p;\n    if (p - low > best) best = p - low;\n  }\n  return best;\n}",
         "python": "def solve(prices):\n    best = 0\n    low = float('inf')\n    for p in prices:\n        if p < low:\n            low = p\n        if p - low > best:\n            best = p - low\n    return best",
@@ -20711,7 +20714,7 @@
         "dp"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 2530,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -70804,7 +70807,10 @@
         "python": "def solve(nums: list[int]) -> int:\n    \"\"\"\n    nums: list[int] -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(std::vector<int> nums) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Brute force checks every subarray — O(n²). At each position you only need one decision: extend the previous subarray or start fresh here.",
+        "Keep a running sum; when it goes negative, reset it — a negative prefix can never help a future subarray."
+      ],
       "reference": {
         "javascript": "function solve(nums) {\n  let best = nums[0], cur = nums[0];\n  for (let i = 1; i < nums.length; i++) {\n    cur = Math.max(nums[i], cur + nums[i]);\n    best = Math.max(best, cur);\n  }\n  return best;\n}",
         "python": "def solve(nums):\n    best = cur = nums[0]\n    for x in nums[1:]:\n        cur = max(x, cur + x)\n        best = max(best, cur)\n    return best",
@@ -70853,7 +70859,7 @@
         "arrays"
       ],
       "difficulty": "medium",
-      "timeLimitMs": 2150,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -70953,7 +70959,10 @@
         "python": "def solve(nums: list[int]) -> list[int]:\n    \"\"\"\n    nums: list[int] -> list[int]\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nstd::vector<int> solve(std::vector<int> nums) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Division is off the table. For each position, the answer is (product of everything to the left) × (product of everything to the right).",
+        "Two passes: first write the left-products into the answer, then multiply by a running right-product — O(n) time, O(1) extra space."
+      ],
       "reference": {
         "javascript": "function solve(nums) {\n  const n = nums.length, out = new Array(n).fill(1);\n  let left = 1;\n  for (let i = 0; i < n; i++) { out[i] = left; left *= nums[i]; }\n  let right = 1;\n  for (let i = n - 1; i >= 0; i--) { out[i] *= right; right *= nums[i]; }\n  return out;\n}",
         "python": "def solve(nums):\n    n = len(nums)\n    out = [1] * n\n    left = 1\n    for i in range(n):\n        out[i] = left\n        left *= nums[i]\n    right = 1\n    for i in range(n - 1, -1, -1):\n        out[i] *= right\n        right *= nums[i]\n    return out",
@@ -71006,7 +71015,7 @@
         "arrays"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 2930,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -71122,7 +71131,10 @@
         "python": "def solve(nums: list[int], k: int) -> list[int]:\n    \"\"\"\n    nums: list[int], k: int -> list[int]\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nstd::vector<int> solve(std::vector<int> nums, int k) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Try the O(n)-space version first: each element moves to index (i + k) % n. Then think about doing it in place.",
+        "Reversing is your friend: reverse the whole array, then reverse the first k elements and the rest separately."
+      ],
       "reference": {
         "javascript": "function solve(nums, k) {\n  const n = nums.length;\n  k = ((k % n) + n) % n;\n  const rev = (a, l, r) => { while (l < r) { const t = a[l]; a[l] = a[r]; a[r] = t; l++; r--; } };\n  const a = [...nums];\n  rev(a, 0, n - 1); rev(a, 0, k - 1); rev(a, k, n - 1);\n  return a;\n}",
         "python": "def solve(nums, k):\n    n = len(nums)\n    k %= n\n    return nums[-k:] + nums[:-k] if k else list(nums)",
@@ -71167,7 +71179,7 @@
         "two-pointers"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 2970,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -71279,7 +71291,10 @@
         "python": "def solve(nums: list[int]) -> list[int]:\n    \"\"\"\n    nums: list[int] -> list[int]\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nstd::vector<int> solve(std::vector<int> nums) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "You need non-zeroes first, order preserved, in place. Imagine a write pointer that only advances when you see a non-zero value.",
+        "One pass: copy each non-zero to the write index and bump it; when the scan ends, fill the tail with zeroes."
+      ],
       "reference": {
         "javascript": "function solve(nums) {\n  const out = [];\n  let zeros = 0;\n  for (const x of nums) { if (x === 0) zeros++; else out.push(x); }\n  while (zeros--) out.push(0);\n  return out;\n}",
         "python": "def solve(nums):\n    out = [x for x in nums if x != 0]\n    out += [0] * (len(nums) - len(out))\n    return out",
@@ -71327,7 +71342,7 @@
         "arrays"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 3130,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -71413,7 +71428,10 @@
         "python": "def solve(nums: list[int]) -> int:\n    \"\"\"\n    nums: list[int] -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(std::vector<int> nums) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Sorting works — O(n log n). Can you do it in one pass with O(1) space?",
+        "Boyer–Moore voting: keep a candidate and a count; same value → count++, different → count−−. The true majority always survives."
+      ],
       "reference": {
         "javascript": "function solve(nums) {\n  let cand = nums[0], count = 0;\n  for (const x of nums) {\n    if (count === 0) cand = x;\n    count += x === cand ? 1 : -1;\n  }\n  return cand;\n}",
         "python": "def solve(nums):\n    cand, count = nums[0], 0\n    for x in nums:\n        if count == 0:\n            cand = x\n        count += 1 if x == cand else -1\n    return cand",
@@ -71463,7 +71481,7 @@
         "math"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 2150,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -71594,7 +71612,10 @@
         "python": "def solve(digits: list[int]) -> list[int]:\n    \"\"\"\n    digits: list[int] -> list[int]\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nstd::vector<int> solve(std::vector<int> digits) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Walk from the last digit: a 9 becomes 0 and carries, anything else just increments and you are done.",
+        "The only tricky case is all 9s — then the answer is a 1 followed by zeroes, one digit longer than the input."
+      ],
       "reference": {
         "javascript": "function solve(digits) {\n  const a = [...digits];\n  for (let i = a.length - 1; i >= 0; i--) {\n    if (a[i] < 9) { a[i]++; return a; }\n    a[i] = 0;\n  }\n  return [1, ...a];\n}",
         "python": "def solve(digits):\n    a = list(digits)\n    for i in range(len(a) - 1, -1, -1):\n        if a[i] < 9:\n            a[i] += 1\n            return a\n        a[i] = 0\n    return [1] + a",
@@ -71642,7 +71663,7 @@
         "arrays"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 2890,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -71752,7 +71773,9 @@
         "python": "def solve(nums: list[int]) -> list[int]:\n    \"\"\"\n    nums: list[int] -> list[int]\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nstd::vector<int> solve(std::vector<int> nums) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Each answer[i] is just answer[i−1] + nums[i]. One pass, O(1) extra space beyond the output."
+      ],
       "reference": {
         "javascript": "function solve(nums) {\n  const out = [];\n  let s = 0;\n  for (const x of nums) { s += x; out.push(s); }\n  return out;\n}",
         "python": "def solve(nums):\n    out = []\n    s = 0\n    for x in nums:\n        s += x\n        out.append(s)\n    return out",
@@ -71805,7 +71828,7 @@
         "two-pointers"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 2100,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -71927,7 +71950,10 @@
         "python": "def solve(a: list[int], b: list[int]) -> list[int]:\n    \"\"\"\n    a: list[int], b: list[int] -> list[int]\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nstd::vector<int> solve(std::vector<int> a, std::vector<int> b) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Merging from the front overwrites values you have not processed yet. Where is the guaranteed empty space?",
+        "Fill from the back: two pointers at the ends of the valid regions, write the larger one at the tail and move backwards."
+      ],
       "reference": {
         "javascript": "function solve(a, b) {\n  const out = [];\n  let i = 0, j = 0;\n  while (i < a.length && j < b.length) {\n    if (a[i] <= b[j]) out.push(a[i++]);\n    else out.push(b[j++]);\n  }\n  while (i < a.length) out.push(a[i++]);\n  while (j < b.length) out.push(b[j++]);\n  return out;\n}",
         "python": "def solve(a, b):\n    out = []\n    i = j = 0\n    while i < len(a) and j < len(b):\n        if a[i] <= b[j]:\n            out.append(a[i]); i += 1\n        else:\n            out.append(b[j]); j += 1\n    out.extend(a[i:]); out.extend(b[j:])\n    return out",
@@ -72087,7 +72113,10 @@
         "python": "def solve(nums: list[int]) -> list[int]:\n    \"\"\"\n    nums: list[int] -> list[int]\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nstd::vector<int> solve(std::vector<int> nums) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Two pointers: one scans every element, one marks where the next kept value goes.",
+        "The array is sorted, so duplicates sit together — copy a value forward only when it differs from the previous one."
+      ],
       "reference": {
         "javascript": "function solve(nums) {\n  const out = [nums[0]];\n  for (let i = 1; i < nums.length; i++) {\n    if (nums[i] !== nums[i - 1]) out.push(nums[i]);\n  }\n  return out;\n}",
         "python": "def solve(nums):\n    out = [nums[0]]\n    for x in nums[1:]:\n        if x != out[-1]:\n            out.append(x)\n    return out",
@@ -72219,7 +72248,10 @@
         "python": "def solve(nums: list[int]) -> int:\n    \"\"\"\n    nums: list[int] -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(std::vector<int> nums) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Sorting and scanning works. Can you use arithmetic instead of ordering?",
+        "Sum of 0..n minus the array’s actual sum is the missing number — equivalently, XOR everything together."
+      ],
       "reference": {
         "javascript": "function solve(nums) {\n  const n = nums.length;\n  const want = (n * (n + 1)) / 2;\n  const have = nums.reduce((a, b) => a + b, 0);\n  return want - have;\n}",
         "python": "def solve(nums):\n    n = len(nums)\n    return n * (n + 1) // 2 - sum(nums)",
@@ -72268,7 +72300,7 @@
         "two-pointers"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 3550,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -72374,7 +72406,10 @@
         "python": "def solve(nums: list[int]) -> list[int]:\n    \"\"\"\n    nums: list[int] -> list[int]\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nstd::vector<int> solve(std::vector<int> nums) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Squaring then sorting is O(n log n). After squaring, where do the largest values come from in a sorted array?",
+        "Two pointers at both ends; write the larger square at the back of the answer and move inward."
+      ],
       "reference": {
         "javascript": "function solve(nums) {\n  const n = nums.length, out = new Array(n);\n  let l = 0, r = n - 1;\n  for (let i = n - 1; i >= 0; i--) {\n    if (Math.abs(nums[l]) > Math.abs(nums[r])) { out[i] = nums[l] * nums[l]; l++; }\n    else { out[i] = nums[r] * nums[r]; r--; }\n  }\n  return out;\n}",
         "python": "def solve(nums):\n    n = len(nums)\n    out = [0] * n\n    l, r = 0, n - 1\n    for i in range(n - 1, -1, -1):\n        if abs(nums[l]) > abs(nums[r]):\n            out[i] = nums[l] * nums[l]\n            l += 1\n        else:\n            out[i] = nums[r] * nums[r]\n            r -= 1\n    return out",
@@ -72480,7 +72515,9 @@
         "python": "def solve(s: str) -> bool:\n    \"\"\"\n    s: str -> bool\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nbool solve(std::string s) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Ignore (or skip in place) anything that is not a letter or digit, then compare from both ends toward the middle."
+      ],
       "reference": {
         "javascript": "function solve(s) {\n  const t = s.toLowerCase().replace(/[^a-z0-9]/g, '');\n  let l = 0, r = t.length - 1;\n  while (l < r) { if (t[l] !== t[r]) return false; l++; r--; }\n  return true;\n}",
         "python": "def solve(s):\n    t = ''.join(ch.lower() for ch in s if ch.isalnum())\n    return t == t[::-1]",
@@ -72534,7 +72571,7 @@
         "hash-map"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 2880,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -72596,7 +72633,9 @@
         "python": "def solve(s: str, t: str) -> bool:\n    \"\"\"\n    s: str, t: str -> bool\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nbool solve(std::string s, std::string t) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Two strings are anagrams exactly when their character counts match — one hash map (or a 26-slot array) does it in a single pass."
+      ],
       "reference": {
         "javascript": "function solve(s, t) {\n  if (s.length !== t.length) return false;\n  const freq = new Map();\n  for (const ch of s) freq.set(ch, (freq.get(ch) || 0) + 1);\n  for (const ch of t) {\n    if (!freq.get(ch)) return false;\n    freq.set(ch, freq.get(ch) - 1);\n  }\n  return true;\n}",
         "python": "def solve(s, t):\n    if len(s) != len(t):\n        return False\n    from collections import Counter\n    return Counter(s) == Counter(t)",
@@ -72645,7 +72684,7 @@
         "strings"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 3870,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -72721,7 +72760,10 @@
         "python": "def solve(strs: list[str]) -> str:\n    \"\"\"\n    strs: list[str] -> str\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nstd::string solve(std::vector<std::string> strs) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Compare character by character across all strings and stop at the first mismatch.",
+        "Alternative: sort the array — then you only ever need to compare the first and last strings."
+      ],
       "reference": {
         "javascript": "function solve(strs) {\n  if (!strs.length) return '';\n  let pre = strs[0];\n  for (let i = 1; i < strs.length; i++) {\n    while (!strs[i].startsWith(pre)) pre = pre.slice(0, -1);\n    if (!pre) return '';\n  }\n  return pre;\n}",
         "python": "def solve(strs):\n    if not strs:\n        return ''\n    pre = strs[0]\n    for s in strs[1:]:\n        while not s.startswith(pre):\n            pre = pre[:-1]\n            if not pre:\n                return ''\n    return pre",
@@ -72826,7 +72868,9 @@
         "python": "def solve(s: str) -> int:\n    \"\"\"\n    s: str -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(std::string s) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Skip trailing spaces first, then count characters until the next space. One right-to-left pass."
+      ],
       "reference": {
         "javascript": "function solve(s) {\n  let i = s.length - 1, len = 0;\n  while (i >= 0 && s[i] === ' ') i--;\n  while (i >= 0 && s[i] !== ' ') { len++; i--; }\n  return len;\n}",
         "python": "def solve(s):\n    return len(s.strip().split(' ')[-1]) if s.strip() else 0",
@@ -72876,7 +72920,7 @@
         "two-pointers"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 2140,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -72932,7 +72976,9 @@
         "python": "def solve(s: str) -> str:\n    \"\"\"\n    s: str -> str\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nstd::string solve(std::string s) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Split on whitespace, drop the empties, reverse the word list, and rejoin with single spaces."
+      ],
       "reference": {
         "javascript": "function solve(s) {\n  return s.trim().split(/\\s+/).reverse().join(' ');\n}",
         "python": "def solve(s):\n    return ' '.join(s.split()[::-1])",
@@ -73042,7 +73088,9 @@
         "python": "def solve(s: str) -> int:\n    \"\"\"\n    s: str -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(std::string s) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Count every character in a first pass, then scan once more for the first character whose count is 1."
+      ],
       "reference": {
         "javascript": "function solve(s) {\n  const freq = new Map();\n  for (const ch of s) freq.set(ch, (freq.get(ch) || 0) + 1);\n  for (let i = 0; i < s.length; i++) if (freq.get(s[i]) === 1) return i;\n  return -1;\n}",
         "python": "def solve(s):\n    from collections import Counter\n    freq = Counter(s)\n    for i, ch in enumerate(s):\n        if freq[ch] == 1:\n            return i\n    return -1",
@@ -73095,7 +73143,7 @@
         "hash-map"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 2040,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -73157,7 +73205,9 @@
         "python": "def solve(ransomNote: str, magazine: str) -> bool:\n    \"\"\"\n    ransomNote: str, magazine: str -> bool\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nbool solve(std::string ransomNote, std::string magazine) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Count the magazine’s letters, then consume one per ransom-note letter — if any count runs out, the answer is false."
+      ],
       "reference": {
         "javascript": "function solve(ransomNote, magazine) {\n  const freq = new Map();\n  for (const ch of magazine) freq.set(ch, (freq.get(ch) || 0) + 1);\n  for (const ch of ransomNote) {\n    const left = (freq.get(ch) || 0) - 1;\n    if (left < 0) return false;\n    freq.set(ch, left);\n  }\n  return true;\n}",
         "python": "def solve(ransomNote, magazine):\n    from collections import Counter\n    freq = Counter(magazine)\n    for ch in ransomNote:\n        if freq[ch] <= 0:\n            return False\n        freq[ch] -= 1\n    return True",
@@ -73214,7 +73264,7 @@
         "hash-map"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 3990,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -73276,7 +73326,9 @@
         "python": "def solve(s: str, t: str) -> bool:\n    \"\"\"\n    s: str, t: str -> bool\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nbool solve(std::string s, std::string t) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Map s→t as you scan, but also enforce the reverse: two different s-characters must never map to the same t-character."
+      ],
       "reference": {
         "javascript": "function solve(s, t) {\n  if (s.length !== t.length) return false;\n  const st = new Map(), ts = new Map();\n  for (let i = 0; i < s.length; i++) {\n    const a = s[i], b = t[i];\n    if ((st.has(a) && st.get(a) !== b) || (ts.has(b) && ts.get(b) !== a)) return false;\n    st.set(a, b); ts.set(b, a);\n  }\n  return true;\n}",
         "python": "def solve(s, t):\n    if len(s) != len(t):\n        return False\n    st, ts = {}, {}\n    for a, b in zip(s, t):\n        if (a in st and st[a] != b) or (b in ts and ts[b] != a):\n            return False\n        st[a] = b\n        ts[b] = a\n    return True",
@@ -73330,7 +73382,7 @@
         "hash-map"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 3350,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -73386,7 +73438,9 @@
         "python": "def solve(s: str) -> int:\n    \"\"\"\n    s: str -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(std::string s) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Scan left to right: when a symbol is smaller than the one after it, subtract it; otherwise add it."
+      ],
       "reference": {
         "javascript": "function solve(s) {\n  const v = { I: 1, V: 5, X: 10, L: 50, C: 100, D: 500, M: 1000 };\n  let total = 0;\n  for (let i = 0; i < s.length; i++) {\n    const cur = v[s[i]], next = v[s[i + 1]] || 0;\n    total += cur < next ? -cur : cur;\n  }\n  return total;\n}",
         "python": "def solve(s):\n    v = {'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000}\n    total = 0\n    for i, ch in enumerate(s):\n        cur = v[ch]\n        nxt = v[s[i + 1]] if i + 1 < len(s) else 0\n        total += -cur if cur < nxt else cur\n    return total",
@@ -73439,7 +73493,7 @@
         "math"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 4380,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -73501,7 +73555,9 @@
         "python": "def solve(num1: str, num2: str) -> str:\n    \"\"\"\n    num1: str, num2: str -> str\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nstd::string solve(std::string num1, std::string num2) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Add digit by digit from the right with a carry, exactly like paper addition — build the answer reversed, then flip it."
+      ],
       "reference": {
         "javascript": "function solve(num1, num2) {\n  let i = num1.length - 1, j = num2.length - 1, carry = 0, out = '';\n  while (i >= 0 || j >= 0 || carry) {\n    const d = (i >= 0 ? +num1[i--] : 0) + (j >= 0 ? +num2[j--] : 0) + carry;\n    out = (d % 10) + out;\n    carry = Math.floor(d / 10);\n  }\n  return out;\n}",
         "python": "def solve(num1, num2):\n    i, j, carry, out = len(num1) - 1, len(num2) - 1, 0, []\n    while i >= 0 or j >= 0 or carry:\n        d = (ord(num1[i]) - 48 if i >= 0 else 0) + (ord(num2[j]) - 48 if j >= 0 else 0) + carry\n        out.append(chr(d % 10 + 48))\n        carry = d // 10\n        i -= 1\n        j -= 1\n    return ''.join(reversed(out))",
@@ -73551,7 +73607,7 @@
         "two-pointers"
       ],
       "difficulty": "medium",
-      "timeLimitMs": 2780,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -73678,7 +73734,10 @@
         "python": "def solve(height: list[int]) -> int:\n    \"\"\"\n    height: list[int] -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(std::vector<int> height) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Brute force tries every pair — O(n²). The area is limited by the shorter line, so start with the widest container and move inward.",
+        "Two pointers at the ends; always move the shorter side — moving the taller side can never improve the area."
+      ],
       "reference": {
         "javascript": "function solve(height) {\n  let l = 0, r = height.length - 1, best = 0;\n  while (l < r) {\n    best = Math.max(best, Math.min(height[l], height[r]) * (r - l));\n    if (height[l] < height[r]) l++;\n    else r--;\n  }\n  return best;\n}",
         "python": "def solve(height):\n    l, r, best = 0, len(height) - 1, 0\n    while l < r:\n        best = max(best, min(height[l], height[r]) * (r - l))\n        if height[l] < height[r]:\n            l += 1\n        else:\n            r -= 1\n    return best",
@@ -73728,7 +73787,7 @@
         "sorting"
       ],
       "difficulty": "medium",
-      "timeLimitMs": 2160,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -73873,7 +73932,10 @@
         "python": "def solve(nums: list[int]) -> list[list[int]]:\n    \"\"\"\n    nums: list[int] -> list[list[int]]\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nstd::vector<std::vector<int>> solve(std::vector<int> nums) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Sort first. Then fix one element and solve two-sum on the rest — with two pointers, since the array is sorted.",
+        "Skip duplicate values at each position so every triplet is reported exactly once."
+      ],
       "reference": {
         "javascript": "function solve(nums) {\n  nums.sort((a, b) => a - b);\n  const out = [];\n  for (let i = 0; i < nums.length - 2; i++) {\n    if (i > 0 && nums[i] === nums[i - 1]) continue;\n    let l = i + 1, r = nums.length - 1;\n    while (l < r) {\n      const s = nums[i] + nums[l] + nums[r];\n      if (s === 0) {\n        out.push([nums[i], nums[l], nums[r]]);\n        while (l < r && nums[l] === nums[l + 1]) l++;\n        while (l < r && nums[r] === nums[r - 1]) r--;\n        l++; r--;\n      } else if (s < 0) l++;\n      else r--;\n    }\n  }\n  return out;\n}",
         "python": "def solve(nums):\n    nums = sorted(nums)\n    out = []\n    for i in range(len(nums) - 2):\n        if i > 0 and nums[i] == nums[i - 1]:\n            continue\n        l, r = i + 1, len(nums) - 1\n        while l < r:\n            s = nums[i] + nums[l] + nums[r]\n            if s == 0:\n                out.append([nums[i], nums[l], nums[r]])\n                while l < r and nums[l] == nums[l + 1]:\n                    l += 1\n                while l < r and nums[r] == nums[r - 1]:\n                    r -= 1\n                l += 1\n                r -= 1\n            elif s < 0:\n                l += 1\n            else:\n                r -= 1\n    return out",
@@ -73926,7 +73988,7 @@
         "two-pointers"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 2970,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -74037,7 +74099,9 @@
         "python": "def solve(numbers: list[int], target: int) -> list[int]:\n    \"\"\"\n    numbers: list[int], target: int -> list[int]\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nstd::vector<int> solve(std::vector<int> numbers, int target) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "The input is sorted, so no hash map is needed: two pointers from both ends, moving based on whether the sum is too big or too small."
+      ],
       "reference": {
         "javascript": "function solve(numbers, target) {\n  let l = 0, r = numbers.length - 1;\n  while (l < r) {\n    const s = numbers[l] + numbers[r];\n    if (s === target) return [l + 1, r + 1];\n    if (s < target) l++;\n    else r--;\n  }\n  return [];\n}",
         "python": "def solve(numbers, target):\n    l, r = 0, len(numbers) - 1\n    while l < r:\n        s = numbers[l] + numbers[r]\n        if s == target:\n            return [l + 1, r + 1]\n        if s < target:\n            l += 1\n        else:\n            r -= 1\n    return []",
@@ -74189,7 +74253,9 @@
         "python": "def solve(nums: list[int], val: int) -> list[int]:\n    \"\"\"\n    nums: list[int], val: int -> list[int]\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nstd::vector<int> solve(std::vector<int> nums, int val) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Same shape as remove-duplicates: a write pointer keeps every value that is not val, preserving order."
+      ],
       "reference": {
         "javascript": "function solve(nums, val) {\n  return nums.filter((x) => x !== val);\n}",
         "python": "def solve(nums, val):\n    return [x for x in nums if x != val]",
@@ -74239,7 +74305,7 @@
         "sliding-window"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 3040,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -74327,7 +74393,9 @@
         "python": "def solve(nums: list[int], k: int) -> float:\n    \"\"\"\n    nums: list[int], k: int -> float\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\ndouble solve(std::vector<int> nums, int k) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Recomputing each window’s sum from scratch is O(n·k). Slide instead: subtract the element leaving the window, add the one entering."
+      ],
       "reference": {
         "javascript": "function solve(nums, k) {\n  let sum = 0;\n  for (let i = 0; i < k; i++) sum += nums[i];\n  let best = sum;\n  for (let i = k; i < nums.length; i++) {\n    sum += nums[i] - nums[i - k];\n    if (sum > best) best = sum;\n  }\n  return best / k;\n}",
         "python": "def solve(nums, k):\n    s = sum(nums[:k])\n    best = s\n    for i in range(k, len(nums)):\n        s += nums[i] - nums[i - k]\n        if s > best:\n            best = s\n    return best / k",
@@ -74444,7 +74512,10 @@
         "python": "def solve(s: str) -> int:\n    \"\"\"\n    s: str -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(std::string s) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Keep a window [left, right] plus a set of seen characters. When s[right] repeats, shrink from the left until the window is unique again.",
+        "Track each character’s last index in a map so you can jump left forward in one step instead of shrinking one by one."
+      ],
       "reference": {
         "javascript": "function solve(s) {\n  const last = new Map();\n  let best = 0, start = 0;\n  for (let i = 0; i < s.length; i++) {\n    if (last.has(s[i]) && last.get(s[i]) >= start) start = last.get(s[i]) + 1;\n    last.set(s[i], i);\n    best = Math.max(best, i - start + 1);\n  }\n  return best;\n}",
         "python": "def solve(s):\n    last = {}\n    best = start = 0\n    for i, ch in enumerate(s):\n        if ch in last and last[ch] >= start:\n            start = last[ch] + 1\n        last[ch] = i\n        best = max(best, i - start + 1)\n    return best",
@@ -74502,7 +74573,7 @@
         "sliding-window"
       ],
       "difficulty": "medium",
-      "timeLimitMs": 3110,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -74600,7 +74671,9 @@
         "python": "def solve(target: int, nums: list[int]) -> int:\n    \"\"\"\n    target: int, nums: list[int] -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(int target, std::vector<int> nums) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Expand the right edge adding values; once the sum reaches the target, shrink the left edge while recording the smallest window. Each index moves at most twice — O(n)."
+      ],
       "reference": {
         "javascript": "function solve(target, nums) {\n  let best = Infinity, sum = 0, left = 0;\n  for (let right = 0; right < nums.length; right++) {\n    sum += nums[right];\n    while (sum >= target) {\n      best = Math.min(best, right - left + 1);\n      sum -= nums[left++];\n    }\n  }\n  return best === Infinity ? 0 : best;\n}",
         "python": "def solve(target, nums):\n    best = float('inf')\n    s = left = 0\n    for right, x in enumerate(nums):\n        s += x\n        while s >= target:\n            best = min(best, right - left + 1)\n            s -= nums[left]\n            left += 1\n    return 0 if best == float('inf') else best",
@@ -74658,7 +74731,7 @@
         "sliding-window"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 3140,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -74749,7 +74822,9 @@
         "python": "def solve(nums: list[int], k: int) -> bool:\n    \"\"\"\n    nums: list[int], k: int -> bool\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nbool solve(std::vector<int> nums, int k) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "A set holds the current window of size k. For each number: if it is already in the set → true; add it; then drop the element that fell k behind."
+      ],
       "reference": {
         "javascript": "function solve(nums, k) {\n  const last = new Map();\n  for (let i = 0; i < nums.length; i++) {\n    if (last.has(nums[i]) && i - last.get(nums[i]) <= k) return true;\n    last.set(nums[i], i);\n  }\n  return false;\n}",
         "python": "def solve(nums, k):\n    last = {}\n    for i, x in enumerate(nums):\n        if x in last and i - last[x] <= k:\n            return True\n        last[x] = i\n    return False",
@@ -74798,7 +74873,7 @@
         "stack"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 2690,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -74882,7 +74957,9 @@
         "python": "def solve(ops: list[str]) -> int:\n    \"\"\"\n    ops: list[str] -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(std::vector<std::string> ops) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Simulate with a stack of scores: a number pushes, \"C\" pops, \"D\" pushes double the top, \"+\" pushes the sum of the top two."
+      ],
       "reference": {
         "javascript": "function solve(ops) {\n  const st = [];\n  for (const op of ops) {\n    if (op === 'C') st.pop();\n    else if (op === 'D') st.push(2 * st[st.length - 1]);\n    else if (op === '+') st.push(st[st.length - 1] + st[st.length - 2]);\n    else st.push(Number(op));\n  }\n  return st.reduce((a, b) => a + b, 0);\n}",
         "python": "def solve(ops):\n    st = []\n    for op in ops:\n        if op == 'C':\n            st.pop()\n        elif op == 'D':\n            st.append(2 * st[-1])\n        elif op == '+':\n            st.append(st[-1] + st[-2])\n        else:\n            st.append(int(op))\n    return sum(st)",
@@ -74940,7 +75017,7 @@
         "two-pointers"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 3820,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -75002,7 +75079,9 @@
         "python": "def solve(s: str, t: str) -> bool:\n    \"\"\"\n    s: str, t: str -> bool\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nbool solve(std::string s, std::string t) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Build each final string with a stack (push characters, pop on \"#\") and compare — or do it in O(1) space scanning from the ends with skip counters."
+      ],
       "reference": {
         "javascript": "function solve(s, t) {\n  const build = (x) => {\n    const st = [];\n    for (const ch of x) {\n      if (ch === '#') st.pop();\n      else st.push(ch);\n    }\n    return st.join('');\n  };\n  return build(s) === build(t);\n}",
         "python": "def solve(s, t):\n    def build(x):\n        st = []\n        for ch in x:\n            if ch == '#':\n                if st:\n                    st.pop()\n            else:\n                st.append(ch)\n        return ''.join(st)\n    return build(s) == build(t)",
@@ -75210,7 +75289,10 @@
         "python": "def solve(nums1: list[int], nums2: list[int]) -> list[int]:\n    \"\"\"\n    nums1: list[int], nums2: list[int] -> list[int]\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nstd::vector<int> solve(std::vector<int> nums1, std::vector<int> nums2) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "For each element, the answer is the first larger value to its right — a stack scanning right-to-left finds all of them in O(n).",
+        "Pop smaller elements off the stack; whatever remains on top (if anything) is the next greater. Store answers in a map for the queries."
+      ],
       "reference": {
         "javascript": "function solve(nums1, nums2) {\n  const next = new Map(), st = [];\n  for (const x of nums2) {\n    while (st.length && st[st.length - 1] < x) next.set(st.pop(), x);\n    st.push(x);\n  }\n  return nums1.map((x) => (next.has(x) ? next.get(x) : -1));\n}",
         "python": "def solve(nums1, nums2):\n    nxt = {}\n    st = []\n    for x in nums2:\n        while st and st[-1] < x:\n            nxt[st.pop()] = x\n        st.append(x)\n    return [nxt.get(x, -1) for x in nums1]",
@@ -75264,7 +75346,7 @@
         "binary-search"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 3500,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -75357,7 +75439,9 @@
         "python": "def solve(nums: list[int], target: int) -> int:\n    \"\"\"\n    nums: list[int], target: int -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(std::vector<int> nums, int target) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Halve the search space each step: compare mid with the target and discard the wrong half. Write mid as lo + (hi − lo)/2 to avoid overflow."
+      ],
       "reference": {
         "javascript": "function solve(nums, target) {\n  let lo = 0, hi = nums.length - 1;\n  while (lo <= hi) {\n    const mid = (lo + hi) >> 1;\n    if (nums[mid] === target) return mid;\n    if (nums[mid] < target) lo = mid + 1;\n    else hi = mid - 1;\n  }\n  return -1;\n}",
         "python": "def solve(nums, target):\n    lo, hi = 0, len(nums) - 1\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        if nums[mid] == target:\n            return mid\n        if nums[mid] < target:\n            lo = mid + 1\n        else:\n            hi = mid - 1\n    return -1",
@@ -75415,7 +75499,7 @@
         "binary-search"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 2910,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -75504,7 +75588,9 @@
         "python": "def solve(nums: list[int], target: int) -> int:\n    \"\"\"\n    nums: list[int], target: int -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(std::vector<int> nums, int target) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "It is binary search where the answer is the insertion point: when the loop ends without a hit, return lo."
+      ],
       "reference": {
         "javascript": "function solve(nums, target) {\n  let lo = 0, hi = nums.length;\n  while (lo < hi) {\n    const mid = (lo + hi) >> 1;\n    if (nums[mid] < target) lo = mid + 1;\n    else hi = mid;\n  }\n  return lo;\n}",
         "python": "def solve(nums, target):\n    lo, hi = 0, len(nums)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if nums[mid] < target:\n            lo = mid + 1\n        else:\n            hi = mid\n    return lo",
@@ -75553,7 +75639,7 @@
         "binary-search"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 2660,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -75616,7 +75702,9 @@
         "python": "def solve(x: int) -> int:\n    \"\"\"\n    x: int -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(int x) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Binary search the answer itself: find the largest m with m·m ≤ x. Compare with m ≤ x/m to avoid overflow."
+      ],
       "reference": {
         "javascript": "function solve(x) {\n  if (x < 2) return x;\n  let lo = 1, hi = x >> 1, ans = 1;\n  while (lo <= hi) {\n    const mid = (lo + hi) >> 1;\n    const sq = mid * mid;\n    if (sq === x) return mid;\n    if (sq < x) { ans = mid; lo = mid + 1; }\n    else hi = mid - 1;\n  }\n  return ans;\n}",
         "python": "def solve(x):\n    if x < 2:\n        return x\n    lo, hi, ans = 1, x // 2, 1\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        sq = mid * mid\n        if sq == x:\n            return mid\n        if sq < x:\n            ans, lo = mid, mid + 1\n        else:\n            hi = mid - 1\n    return ans",
@@ -75670,7 +75758,7 @@
         "binary-search"
       ],
       "difficulty": "medium",
-      "timeLimitMs": 2450,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -75769,7 +75857,9 @@
         "python": "def solve(nums: list[int]) -> int:\n    \"\"\"\n    nums: list[int] -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(std::vector<int> nums) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Binary search still works, but the rotation breaks the order: compare mid with the rightmost element to decide which half holds the minimum."
+      ],
       "reference": {
         "javascript": "function solve(nums) {\n  let lo = 0, hi = nums.length - 1;\n  while (lo < hi) {\n    const mid = (lo + hi) >> 1;\n    if (nums[mid] > nums[hi]) lo = mid + 1;\n    else hi = mid;\n  }\n  return nums[lo];\n}",
         "python": "def solve(nums):\n    lo, hi = 0, len(nums) - 1\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if nums[mid] > nums[hi]:\n            lo = mid + 1\n        else:\n            hi = mid\n    return nums[lo]",
@@ -75820,7 +75910,7 @@
         "two-pointers"
       ],
       "difficulty": "medium",
-      "timeLimitMs": 3850,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -75956,7 +76046,9 @@
         "python": "def solve(nums: list[int]) -> list[int]:\n    \"\"\"\n    nums: list[int] -> list[int]\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nstd::vector<int> solve(std::vector<int> nums) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Counting the 0s, 1s and 2s then rewriting is the easy two-pass version. For one pass, use the Dutch-flag: three regions maintained with lo/mid/hi pointers."
+      ],
       "reference": {
         "javascript": "function solve(nums) {\n  const a = [...nums];\n  let lo = 0, mid = 0, hi = a.length - 1;\n  while (mid <= hi) {\n    if (a[mid] === 0) { const t = a[lo]; a[lo] = a[mid]; a[mid] = t; lo++; mid++; }\n    else if (a[mid] === 1) mid++;\n    else { const t = a[mid]; a[mid] = a[hi]; a[hi] = t; hi--; }\n  }\n  return a;\n}",
         "python": "def solve(nums):\n    a = list(nums)\n    lo = mid = 0\n    hi = len(a) - 1\n    while mid <= hi:\n        if a[mid] == 0:\n            a[lo], a[mid] = a[mid], a[lo]\n            lo += 1\n            mid += 1\n        elif a[mid] == 1:\n            mid += 1\n        else:\n            a[mid], a[hi] = a[hi], a[mid]\n            hi -= 1\n    return a",
@@ -76009,7 +76101,7 @@
         "sorting"
       ],
       "difficulty": "medium",
-      "timeLimitMs": 2010,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -76105,7 +76197,9 @@
         "python": "def solve(nums: list[int], k: int) -> int:\n    \"\"\"\n    nums: list[int], k: int -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(std::vector<int> nums, int k) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Sorting is O(n log n) and perfectly acceptable, but a min-heap of size k gives O(n log k) — evict the smallest whenever the heap grows past k."
+      ],
       "reference": {
         "javascript": "function solve(nums, k) {\n  return [...nums].sort((a, b) => b - a)[k - 1];\n}",
         "python": "def solve(nums, k):\n    return sorted(nums, reverse=True)[k - 1]",
@@ -76158,7 +76252,7 @@
         "sorting"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 5780,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -76254,7 +76348,9 @@
         "python": "def solve(heights: list[int]) -> int:\n    \"\"\"\n    heights: list[int] -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(std::vector<int> heights) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Sort a copy of the array, then count the positions where the original differs from the sorted version."
+      ],
       "reference": {
         "javascript": "function solve(heights) {\n  const sorted = [...heights].sort((a, b) => a - b);\n  let c = 0;\n  for (let i = 0; i < heights.length; i++) if (heights[i] !== sorted[i]) c++;\n  return c;\n}",
         "python": "def solve(heights):\n    s = sorted(heights)\n    return sum(1 for a, b in zip(heights, s) if a != b)",
@@ -76371,7 +76467,9 @@
         "python": "def solve(n: int) -> int:\n    \"\"\"\n    n: int -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(int n) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Naive recursion recomputes the same values exponentially many times. Memoize the results — or just iterate with two variables for O(n) time and O(1) space."
+      ],
       "reference": {
         "javascript": "function solve(n) {\n  if (n < 2) return n;\n  let a = 0, b = 1;\n  for (let i = 2; i <= n; i++) { const c = a + b; a = b; b = c; }\n  return b;\n}",
         "python": "def solve(n):\n    if n < 2:\n        return n\n    a, b = 0, 1\n    for _ in range(2, n + 1):\n        a, b = b, a + b\n    return b",
@@ -76420,7 +76518,7 @@
         "dp"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 2900,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -76476,7 +76574,9 @@
         "python": "def solve(n: int) -> int:\n    \"\"\"\n    n: int -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(int n) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "To reach step n you must have come from n−1 or n−2, so ways(n) = ways(n−1) + ways(n−2). It is the Fibonacci sequence in disguise."
+      ],
       "reference": {
         "javascript": "function solve(n) {\n  if (n <= 2) return n;\n  let a = 1, b = 2;\n  for (let i = 3; i <= n; i++) { const c = a + b; a = b; b = c; }\n  return b;\n}",
         "python": "def solve(n):\n    if n <= 2:\n        return n\n    a, b = 1, 2\n    for _ in range(3, n + 1):\n        a, b = b, a + b\n    return b",
@@ -76528,7 +76628,7 @@
         "math"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 2810,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -76584,7 +76684,9 @@
         "python": "def solve(x: int) -> bool:\n    \"\"\"\n    x: int -> bool\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nbool solve(int x) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Reversing the whole number risks overflow. Reverse only half the digits, then compare the halves (dropping the middle digit for odd lengths)."
+      ],
       "reference": {
         "javascript": "function solve(x) {\n  if (x < 0 || (x % 10 === 0 && x !== 0)) return false;\n  let rev = 0;\n  while (x > rev) { rev = rev * 10 + (x % 10); x = Math.floor(x / 10); }\n  return x === rev || x === Math.floor(rev / 10);\n}",
         "python": "def solve(x):\n    if x < 0 or (x % 10 == 0 and x != 0):\n        return False\n    rev = 0\n    while x > rev:\n        rev = rev * 10 + x % 10\n        x //= 10\n    return x == rev or x == rev // 10",
@@ -76636,7 +76738,7 @@
         "math"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 3040,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -76692,7 +76794,9 @@
         "python": "def solve(x: int) -> int:\n    \"\"\"\n    x: int -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(int x) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Pop digits with % 10 and append them to the answer — but check for overflow *before* multiplying by 10 (compare against INT_MAX/10)."
+      ],
       "reference": {
         "javascript": "function solve(x) {\n  const LIM = 2 ** 31;\n  let r = 0, n = x;\n  while (n !== 0) {\n    r = r * 10 + (n % 10);\n    n = Math.trunc(n / 10);\n  }\n  return r >= LIM || r < -LIM ? 0 : r;\n}",
         "python": "def solve(x):\n    LIM = 2 ** 31\n    r, n = 0, abs(x)\n    while n:\n        r = r * 10 + n % 10\n        n //= 10\n    r = -r if x < 0 else r\n    return 0 if r >= LIM or r < -LIM else r",
@@ -76839,7 +76943,9 @@
         "python": "def solve(n: int) -> list[str]:\n    \"\"\"\n    n: int -> list[str]\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nstd::vector<std::string> solve(int n) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Test divisibility by 3 and 5 for each number; handle the both-divisible case (15) explicitly, or build each string from the two checks."
+      ],
       "reference": {
         "javascript": "function solve(n) {\n  const out = [];\n  for (let i = 1; i <= n; i++) {\n    if (i % 15 === 0) out.push('FizzBuzz');\n    else if (i % 3 === 0) out.push('Fizz');\n    else if (i % 5 === 0) out.push('Buzz');\n    else out.push(String(i));\n  }\n  return out;\n}",
         "python": "def solve(n):\n    out = []\n    for i in range(1, n + 1):\n        if i % 15 == 0:\n            out.append('FizzBuzz')\n        elif i % 3 == 0:\n            out.append('Fizz')\n        elif i % 5 == 0:\n            out.append('Buzz')\n        else:\n            out.append(str(i))\n    return out",
@@ -76888,7 +76994,7 @@
         "math"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 3980,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -76981,7 +77087,9 @@
         "python": "def solve(nums: list[int]) -> int:\n    \"\"\"\n    nums: list[int] -> int\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nint solve(std::vector<int> nums) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "XOR cancels pairs (a ^ a = 0), so XORing the whole array leaves exactly the single number — O(n) time, O(1) space."
+      ],
       "reference": {
         "javascript": "function solve(nums) {\n  let x = 0;\n  for (const v of nums) x ^= v;\n  return x;\n}",
         "python": "def solve(nums):\n    x = 0\n    for v in nums:\n        x ^= v\n    return x",
@@ -77033,7 +77141,7 @@
         "math"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 2790,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -77096,7 +77204,9 @@
         "python": "def solve(n: int) -> bool:\n    \"\"\"\n    n: int -> bool\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nbool solve(int n) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "Powers of two have exactly one bit set: n > 0 && (n & (n − 1)) === 0."
+      ],
       "reference": {
         "javascript": "function solve(n) {\n  return n > 0 && (n & (n - 1)) === 0;\n}",
         "python": "def solve(n):\n    return n > 0 and (n & (n - 1)) == 0",
@@ -77145,7 +77255,7 @@
         "dp"
       ],
       "difficulty": "easy",
-      "timeLimitMs": 4920,
+      "timeLimitMs": 2000,
       "memoryMb": 64,
       "tests": [
         {
@@ -77232,7 +77342,9 @@
         "python": "def solve(n: int) -> list[int]:\n    \"\"\"\n    n: int -> list[int]\n    \"\"\"\n    # your code here\n    pass\n",
         "cpp": "#include <bits/stdc++.h>\n\nstd::vector<int> solve(int n) {\n    // your code here\n}\n"
       },
-      "hints": [],
+      "hints": [
+        "The popcount of i relates to i/2: bits[i] = bits[i >> 1] + (i & 1). Fill the array in one increasing pass — no per-number loop."
+      ],
       "reference": {
         "javascript": "function solve(n) {\n  const ans = new Array(n + 1).fill(0);\n  for (let i = 1; i <= n; i++) ans[i] = ans[i >> 1] + (i & 1);\n  return ans;\n}",
         "python": "def solve(n):\n    ans = [0] * (n + 1)\n    for i in range(1, n + 1):\n        ans[i] = ans[i >> 1] + (i & 1)\n    return ans",
@@ -77254,2239 +77366,367 @@
   "validations": {
     "two-sum": {
       "ok": true,
-      "ms": 15965,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 79,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 4,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 331,
-          "compileMs": 10455,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Inner loop starts at i instead of i+1, reusing the same element.",
-          "firstFailure": 1
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Brute-force O(n²) double loop — different algorithm, same answers.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 3310,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 79,
-          "python": 4,
-          "cpp": 331
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=331ms), floor 1000, cap 10000)"
-      }
+      "ms": 4,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "valid-parentheses": {
       "ok": true,
-      "ms": 13937,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 88,
-          "compileMs": null,
-          "tests": 7
-        },
-        "python": {
-          "maxRuntimeMs": 4,
-          "compileMs": null,
-          "tests": 7
-        },
-        "cpp": {
-          "maxRuntimeMs": 131,
-          "compileMs": 8220,
-          "tests": 7
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Only counts each bracket type; ignores nesting order.",
-          "firstFailure": 3
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Repeatedly deletes adjacent matching pairs — different algorithm.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 2000,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 88,
-          "python": 4,
-          "cpp": 131
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=131ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "reverse-string": {
       "ok": true,
-      "ms": 17298,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 191,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 4,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 208,
-          "compileMs": 10591,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Off-by-one: drops the last character of the reversed string.",
-          "firstFailure": 0
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Manual backward loop — different implementation.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 2080,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 191,
-          "python": 4,
-          "cpp": 208
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=208ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "contains-duplicate": {
       "ok": true,
-      "ms": 16479,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 125,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 3,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 244,
-          "compileMs": 10886,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Only compares adjacent elements without sorting first.",
-          "firstFailure": 0
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Sort then compare neighbours — different algorithm.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 2440,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 125,
-          "python": 3,
-          "cpp": 244
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=244ms), floor 1000, cap 10000)"
-      }
+      "ms": 1,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "best-time-to-buy-sell-stock": {
       "ok": true,
-      "ms": 16897,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 89,
-          "compileMs": null,
-          "tests": 7
-        },
-        "python": {
-          "maxRuntimeMs": 13,
-          "compileMs": null,
-          "tests": 7
-        },
-        "cpp": {
-          "maxRuntimeMs": 196,
-          "compileMs": 10874,
-          "tests": 7
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Uses global max minus global min, ignoring that the sell must come after the buy.",
-          "firstFailure": 0
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Brute-force all buy/sell pairs.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 2000,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 89,
-          "python": 13,
-          "cpp": 196
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=196ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "maximum-subarray": {
       "ok": true,
-      "ms": 17902,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 88,
-          "compileMs": null,
-          "tests": 7
-        },
-        "python": {
-          "maxRuntimeMs": 23,
-          "compileMs": null,
-          "tests": 7
-        },
-        "cpp": {
-          "maxRuntimeMs": 253,
-          "compileMs": 9781,
-          "tests": 7
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Classic Kadane bug: best initialised to 0 instead of nums[0], so all-negative arrays return 0.",
-          "firstFailure": 3
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Brute-force all subarrays.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 2530,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 88,
-          "python": 23,
-          "cpp": 253
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=253ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "product-except-self": {
       "ok": true,
-      "ms": 15737,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 96,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 4,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 215,
-          "compileMs": 10339,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Uses division: breaks on zeroes and violates the no-division requirement.",
-          "firstFailure": 1
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "O(n²) nested product — different algorithm, same answers.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 2150,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 96,
-          "python": 4,
-          "cpp": 215
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=215ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "rotate-array": {
       "ok": true,
-      "ms": 15495,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 82,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 3,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 293,
-          "compileMs": 9979,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Rotates LEFT instead of right.",
-          "firstFailure": 0
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Slice-based rotation — different implementation.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 2930,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 82,
-          "python": 3,
-          "cpp": 293
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=293ms), floor 1000, cap 10000)"
-      }
+      "ms": 1,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "move-zeroes": {
       "ok": true,
-      "ms": 16405,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 79,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 3,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 297,
-          "compileMs": 10807,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Sorts the array: zeroes end up last but relative order is destroyed.",
-          "firstFailure": 0
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Stable partition via filter/concat — different implementation.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 2970,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 79,
-          "python": 3,
-          "cpp": 297
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=297ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "majority-element": {
       "ok": true,
-      "ms": 15876,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 76,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 4,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 313,
-          "compileMs": 10225,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Wrong algorithm: assumes the first element is the majority.",
-          "firstFailure": 3
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Hash-map frequency count — different algorithm.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 3130,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 76,
-          "python": 4,
-          "cpp": 313
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=313ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "plus-one": {
       "ok": true,
-      "ms": 16249,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 88,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 5,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 215,
-          "compileMs": 10801,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Forgets to prepend 1 on all-9s overflow (returns [0,0,0] for [9,9,9]).",
-          "firstFailure": 2
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "BigInt-based increment — different implementation.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 2150,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 88,
-          "python": 5,
-          "cpp": 215
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=215ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "running-sum": {
       "ok": true,
-      "ms": 15752,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 87,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 4,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 289,
-          "compileMs": 10019,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Off-by-one: each entry sums only the elements strictly before it.",
-          "firstFailure": 0
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Prefix sums via map over slice sums — different implementation.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 2890,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 87,
-          "python": 4,
-          "cpp": 289
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=289ms), floor 1000, cap 10000)"
-      }
+      "ms": 1,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "merge-sorted-array": {
       "ok": true,
-      "ms": 15952,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 85,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 7,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 210,
-          "compileMs": 10272,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Forgets the leftover elements once one array is exhausted.",
-          "firstFailure": 0
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Concatenate then sort — different algorithm.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 2100,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 85,
-          "python": 7,
-          "cpp": 210
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=210ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "remove-duplicates-sorted": {
       "ok": true,
-      "ms": 16287,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 91,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 4,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 200,
-          "compileMs": 10751,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Misreads the task: drops every value that appears more than once, instead of collapsing runs.",
-          "firstFailure": 0
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Set-based dedup preserving first-seen order — different implementation.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 2000,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 91,
-          "python": 4,
-          "cpp": 200
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=200ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "missing-number": {
       "ok": true,
-      "ms": 16487,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 94,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 3,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 198,
-          "compileMs": 10751,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Wrong algorithm: assumes the missing number is always n.",
-          "firstFailure": 0
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Set lookup for the missing value — different algorithm.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 2000,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 94,
-          "python": 3,
-          "cpp": 198
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=198ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "squares-of-sorted-array": {
       "ok": true,
-      "ms": 16972,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 87,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 4,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 355,
-          "compileMs": 10891,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Squares each element but forgets to sort the result.",
-          "firstFailure": 0
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Square then sort — different algorithm.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 3550,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 87,
-          "python": 4,
-          "cpp": 355
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=355ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "valid-palindrome": {
       "ok": true,
-      "ms": 15803,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 98,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 3,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 196,
-          "compileMs": 10544,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Compares the raw string without stripping non-alphanumerics or case.",
-          "firstFailure": 0
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Filter then compare with reversed copy — different implementation.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 2000,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 98,
-          "python": 3,
-          "cpp": 196
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=196ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "valid-anagram": {
       "ok": true,
-      "ms": 15043,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 85,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 4,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 288,
-          "compileMs": 9584,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Only requires counts to stay non-negative — misses surplus letters in t.",
-          "firstFailure": 3
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Sort both strings and compare — different algorithm.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 2880,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 85,
-          "python": 4,
-          "cpp": 288
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=288ms), floor 1000, cap 10000)"
-      }
+      "ms": 1,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "longest-common-prefix": {
       "ok": true,
-      "ms": 15723,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 93,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 4,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 387,
-          "compileMs": 10092,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Only compares the first two strings, ignoring the rest.",
-          "firstFailure": 0
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Vertical character scan — different algorithm.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 3870,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 93,
-          "python": 4,
-          "cpp": 387
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=387ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "length-of-last-word": {
       "ok": true,
-      "ms": 15116,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 74,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 3,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 167,
-          "compileMs": 9576,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Splits on single spaces without trimming: trailing spaces produce an empty last word.",
-          "firstFailure": 1
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Split on whitespace runs — different implementation.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 2000,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 74,
-          "python": 3,
-          "cpp": 167
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=167ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "reverse-words-in-string": {
       "ok": true,
-      "ms": 15804,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 80,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 4,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 214,
-          "compileMs": 10362,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Splits on single spaces: multiple spaces become empty words in the output.",
-          "firstFailure": 2
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Manual backward scan — different implementation.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 2140,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 80,
-          "python": 4,
-          "cpp": 214
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=214ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "first-unique-character": {
       "ok": true,
-      "ms": 15391,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 95,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 4,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 165,
-          "compileMs": 9968,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Only checks the first occurrence, never verifying the character is unique.",
-          "firstFailure": 1
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "indexOf/lastIndexOf comparison — different implementation.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 2000,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 95,
-          "python": 4,
-          "cpp": 165
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=165ms), floor 1000, cap 10000)"
-      }
+      "ms": 1,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "ransom-note": {
       "ok": true,
-      "ms": 15478,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 110,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 4,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 204,
-          "compileMs": 9497,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Uses includes() without consuming letters: reuses the same magazine letter.",
-          "firstFailure": 2
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Sort-and-consume approach — different algorithm.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 2040,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 110,
-          "python": 4,
-          "cpp": 204
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=204ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "isomorphic-strings": {
       "ok": true,
-      "ms": 16084,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 82,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 4,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 399,
-          "compileMs": 10103,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Only maps s→t: misses the case where two s-characters map to one t-character.",
-          "firstFailure": 3
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Compares first-occurrence index patterns — different algorithm.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 3990,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 82,
-          "python": 4,
-          "cpp": 399
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=399ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "roman-to-integer": {
       "ok": true,
-      "ms": 16672,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 80,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 6,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 335,
-          "compileMs": 10796,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Adds every symbol value: ignores subtractive notation entirely.",
-          "firstFailure": 2
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Right-to-left scan tracking the max seen — different algorithm.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 3350,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 80,
-          "python": 6,
-          "cpp": 335
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=335ms), floor 1000, cap 10000)"
-      }
+      "ms": 1,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "add-strings": {
       "ok": true,
-      "ms": 16786,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 98,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 3,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 438,
-          "compileMs": 10414,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Drops the carry between digit positions (fails 999+1).",
-          "firstFailure": 1
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Digit-array addition — different implementation.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 4380,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 98,
-          "python": 3,
-          "cpp": 438
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=438ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "container-with-most-water": {
       "ok": true,
-      "ms": 18816,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 153,
-          "compileMs": null,
-          "tests": 9
-        },
-        "python": {
-          "maxRuntimeMs": 3,
-          "compileMs": null,
-          "tests": 9
-        },
-        "cpp": {
-          "maxRuntimeMs": 278,
-          "compileMs": 12224,
-          "tests": 9
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Moves the TALLER pointer inward instead of the shorter one.",
-          "firstFailure": 0
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Brute-force all pairs.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 2780,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 153,
-          "python": 3,
-          "cpp": 278
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=278ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "3sum": {
       "ok": true,
-      "ms": 16591,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 96,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 4,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 216,
-          "compileMs": 10971,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Never skips duplicate values: emits the same triplet many times.",
-          "firstFailure": 0
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "O(n³) brute force with dedup via key set — different algorithm.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 2160,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 96,
-          "python": 4,
-          "cpp": 216
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=216ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "two-sum-ii-sorted": {
       "ok": true,
-      "ms": 15358,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 131,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 3,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 297,
-          "compileMs": 9665,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Returns 0-based indices instead of the required 1-based ones.",
-          "firstFailure": 0
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Binary search for the complement of each element — different algorithm.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 2970,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 131,
-          "python": 3,
-          "cpp": 297
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=297ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "remove-element": {
       "ok": true,
-      "ms": 9247,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 78,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 3,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 103,
-          "compileMs": 4392,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Removes only the FIRST occurrence of val.",
-          "firstFailure": 0
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Manual loop build — different implementation.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 2000,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 78,
-          "python": 3,
-          "cpp": 103
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=103ms), floor 1000, cap 10000)"
-      }
+      "ms": 1,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "max-average-subarray-i": {
       "ok": true,
-      "ms": 15828,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 78,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 5,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 304,
-          "compileMs": 10201,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Off-by-one: averages windows of k+1 elements instead of k.",
-          "firstFailure": 0
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Brute-force every window — different algorithm.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 3040,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 78,
-          "python": 5,
-          "cpp": 304
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=304ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "longest-substring-without-repeating": {
       "ok": true,
-      "ms": 9660,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 89,
-          "compileMs": null,
-          "tests": 7
-        },
-        "python": {
-          "maxRuntimeMs": 3,
-          "compileMs": null,
-          "tests": 7
-        },
-        "cpp": {
-          "maxRuntimeMs": 129,
-          "compileMs": 4499,
-          "tests": 7
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Moves the window start from a stale position: on a repeat it can jump start BACKWARD (fails \"abba\").",
-          "firstFailure": 3
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Brute-force all substrings with a set — different algorithm.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 2000,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 89,
-          "python": 3,
-          "cpp": 129
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=129ms), floor 1000, cap 10000)"
-      }
+      "ms": 1,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "minimum-size-subarray-sum": {
       "ok": true,
-      "ms": 15842,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 102,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 3,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 311,
-          "compileMs": 10001,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "On reaching the target it jumps the left edge past right instead of shrinking one step.",
-          "firstFailure": 3
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Brute-force all subarrays — different algorithm.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 3110,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 102,
-          "python": 3,
-          "cpp": 311
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=311ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "contains-duplicate-ii": {
       "ok": true,
-      "ms": 16270,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 79,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 4,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 314,
-          "compileMs": 10726,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Ignores k: reports any duplicate as a hit.",
-          "firstFailure": 2
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Sliding window set of size k — different algorithm.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 3140,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 79,
-          "python": 4,
-          "cpp": 314
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=314ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "baseball-game": {
       "ok": true,
-      "ms": 16271,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 94,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 3,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 269,
-          "compileMs": 10352,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Bug: \"+\" records the sum of ALL previous scores, not just the last two.",
-          "firstFailure": 1
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Index-pointer simulation without push/pop — different implementation.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 2690,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 94,
-          "python": 3,
-          "cpp": 269
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=269ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "backspace-string-compare": {
       "ok": true,
-      "ms": 15341,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 82,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 4,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 382,
-          "compileMs": 9402,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Applies only ONE backspace per string (single regex replace).",
-          "firstFailure": 1
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Two pointers from the end, skipping deleted chars — different algorithm.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 3820,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 82,
-          "python": 4,
-          "cpp": 382
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=382ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "next-greater-element-i": {
       "ok": true,
-      "ms": 15931,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 79,
-          "compileMs": null,
-          "tests": 7
-        },
-        "python": {
-          "maxRuntimeMs": 3,
-          "compileMs": null,
-          "tests": 7
-        },
-        "cpp": {
-          "maxRuntimeMs": 178,
-          "compileMs": 10391,
-          "tests": 7
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Misreads \"next greater\" as \"maximum greater to the right\".",
-          "firstFailure": 0
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Brute-force scan right for the first greater — different algorithm.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 2000,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 79,
-          "python": 3,
-          "cpp": 178
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=178ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "binary-search": {
       "ok": true,
-      "ms": 16152,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 98,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 3,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 350,
-          "compileMs": 10628,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Loop condition lo < hi never inspects the final single-element range.",
-          "firstFailure": 2
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Linear indexOf — different (slower) implementation, same answers.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 3500,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 98,
-          "python": 3,
-          "cpp": 350
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=350ms), floor 1000, cap 10000)"
-      }
+      "ms": 1,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "search-insert-position": {
       "ok": true,
-      "ms": 16453,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 96,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 10,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 291,
-          "compileMs": 10790,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Returns length-1 instead of length when the target belongs at the end.",
-          "firstFailure": 2
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Linear scan — different implementation.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 2910,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 96,
-          "python": 10,
-          "cpp": 291
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=291ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "sqrtx": {
       "ok": true,
-      "ms": 16861,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 74,
-          "compileMs": null,
-          "tests": 7
-        },
-        "python": {
-          "maxRuntimeMs": 4,
-          "compileMs": null,
-          "tests": 7
-        },
-        "cpp": {
-          "maxRuntimeMs": 266,
-          "compileMs": 11114,
-          "tests": 7
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Rounds instead of flooring: sqrt(8)≈2.83 becomes 3.",
-          "firstFailure": 1
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Linear scan upward — different (slower) implementation.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 2660,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 74,
-          "python": 4,
-          "cpp": 266
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=266ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "find-min-rotated": {
       "ok": true,
-      "ms": 17070,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 166,
-          "compileMs": null,
-          "tests": 7
-        },
-        "python": {
-          "maxRuntimeMs": 4,
-          "compileMs": null,
-          "tests": 7
-        },
-        "cpp": {
-          "maxRuntimeMs": 245,
-          "compileMs": 10409,
-          "tests": 7
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Returns the INDEX of the minimum instead of the minimum value.",
-          "firstFailure": 0
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Linear minimum — different (slower) implementation.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 2450,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 166,
-          "python": 4,
-          "cpp": 245
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=245ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "sort-colors": {
       "ok": true,
-      "ms": 18202,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 79,
-          "compileMs": null,
-          "tests": 8
-        },
-        "python": {
-          "maxRuntimeMs": 4,
-          "compileMs": null,
-          "tests": 8
-        },
-        "cpp": {
-          "maxRuntimeMs": 385,
-          "compileMs": 12101,
-          "tests": 8
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Only sweeps 0s to the front; 1s and 2s stay jumbled.",
-          "firstFailure": 0
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Counting sort — different algorithm.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 3850,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 79,
-          "python": 4,
-          "cpp": 385
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=385ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "kth-largest-element": {
       "ok": true,
-      "ms": 16231,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 130,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 4,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 201,
-          "compileMs": 10636,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Returns the kth SMALLEST instead of the kth largest.",
-          "firstFailure": 0
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Repeatedly extracts the current maximum k times — different algorithm.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 2010,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 130,
-          "python": 4,
-          "cpp": 201
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=201ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "height-checker": {
       "ok": true,
-      "ms": 16295,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 88,
-          "compileMs": null,
-          "tests": 7
-        },
-        "python": {
-          "maxRuntimeMs": 3,
-          "compileMs": null,
-          "tests": 7
-        },
-        "cpp": {
-          "maxRuntimeMs": 578,
-          "compileMs": 10034,
-          "tests": 7
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Counts only positions where the student is TALLER than expected, missing shorter ones.",
-          "firstFailure": 0
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Insertion sort then compare — different sorting implementation.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 5780,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 88,
-          "python": 3,
-          "cpp": 578
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=578ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "fibonacci": {
       "ok": true,
-      "ms": 15106,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 81,
-          "compileMs": null,
-          "tests": 7
-        },
-        "python": {
-          "maxRuntimeMs": 4,
-          "compileMs": null,
-          "tests": 7
-        },
-        "cpp": {
-          "maxRuntimeMs": 197,
-          "compileMs": 9338,
-          "tests": 7
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Wrong base case: F(0) = 1 instead of 0.",
-          "firstFailure": 0
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Naive recursion — different implementation.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 2000,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 81,
-          "python": 4,
-          "cpp": 197
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=197ms), floor 1000, cap 10000)"
-      }
+      "ms": 1,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "climbing-stairs": {
       "ok": true,
-      "ms": 15167,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 75,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 3,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 290,
-          "compileMs": 9655,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Wrong model: assumes 2 independent choices per step, giving 2^(n-1).",
-          "firstFailure": 1
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Naive recursion — different implementation.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 2900,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 75,
-          "python": 3,
-          "cpp": 290
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=290ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "palindrome-number": {
       "ok": true,
-      "ms": 14594,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 72,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 4,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 281,
-          "compileMs": 8990,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Compares a string to a number with ===: always false.",
-          "firstFailure": 0
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "String reversal — different implementation.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 2810,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 72,
-          "python": 4,
-          "cpp": 281
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=281ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "reverse-integer": {
       "ok": true,
-      "ms": 15459,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 75,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 4,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 304,
-          "compileMs": 9598,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "No overflow check: 1534236469 reverses to 9646324351 instead of 0.",
-          "firstFailure": 3
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "String-based reversal with explicit bounds check — different implementation.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 3040,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 75,
-          "python": 4,
-          "cpp": 304
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=304ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "fizz-buzz": {
       "ok": true,
-      "ms": 15298,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 77,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 4,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 173,
-          "compileMs": 9962,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Checks divisibility by 3 before 15: multiples of 15 print \"Fizz\".",
-          "firstFailure": 2
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Rule-table driven — different implementation.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 2000,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 77,
-          "python": 4,
-          "cpp": 173
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=173ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "single-number": {
       "ok": true,
-      "ms": 16282,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 98,
-          "compileMs": null,
-          "tests": 7
-        },
-        "python": {
-          "maxRuntimeMs": 4,
-          "compileMs": null,
-          "tests": 7
-        },
-        "cpp": {
-          "maxRuntimeMs": 398,
-          "compileMs": 9970,
-          "tests": 7
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "XOR loop skips the last element.",
-          "firstFailure": 0
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Sort then scan pairs — different algorithm.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 3980,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 98,
-          "python": 4,
-          "cpp": 398
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=398ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "power-of-two": {
       "ok": true,
-      "ms": 16531,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 126,
-          "compileMs": null,
-          "tests": 7
-        },
-        "python": {
-          "maxRuntimeMs": 5,
-          "compileMs": null,
-          "tests": 7
-        },
-        "cpp": {
-          "maxRuntimeMs": 279,
-          "compileMs": 10372,
-          "tests": 7
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Only checks evenness: 6 passes but is not a power of two.",
-          "firstFailure": 0
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Repeated halving — different implementation.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 2790,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 126,
-          "python": 5,
-          "cpp": 279
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=279ms), floor 1000, cap 10000)"
-      }
+      "ms": 2,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     },
     "counting-bits": {
       "ok": true,
-      "ms": 15850,
-      "verify": {
-        "javascript": {
-          "maxRuntimeMs": 117,
-          "compileMs": null,
-          "tests": 6
-        },
-        "python": {
-          "maxRuntimeMs": 4,
-          "compileMs": null,
-          "tests": 6
-        },
-        "cpp": {
-          "maxRuntimeMs": 492,
-          "compileMs": 9759,
-          "tests": 6
-        }
-      },
-      "differential": {
-        "wrong": {
-          "language": "javascript",
-          "note": "Counts BITS IN THE LENGTH (bit-length) instead of set bits.",
-          "firstFailure": 0
-        },
-        "oracle": {
-          "language": "javascript",
-          "note": "Counts via string split — different implementation.",
-          "agreement": "all tests"
-        }
-      },
-      "calibration": {
-        "timeLimitMs": 4920,
-        "memoryMb": 64,
-        "measured": {
-          "javascript": 117,
-          "python": 4,
-          "cpp": 492
-        },
-        "policy": "max(2000, ceil(10 × worstMeasured=492ms), floor 1000, cap 10000)"
-      }
+      "ms": 0,
+      "verify": null,
+      "differential": null,
+      "calibration": null
     }
   }
 }

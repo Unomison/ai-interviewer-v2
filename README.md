@@ -278,15 +278,17 @@ and Pyodide are unaffected. Toolchain evaluation and decisions:
 Per spec Section 13. M1 done (see `MILESTONE1_REPORT.md`); M2 done (see
 `MILESTONE2_REPORT.md`); M3 done (see `MILESTONE3_REPORT.md`); M4 done (see
 `MILESTONE4_REPORT.md`); M5 done (see `MILESTONE5_REPORT.md`); M6 done (see
-`MILESTONE6_REPORT.md`); M7 done (see `MILESTONE7_REPORT.md`). Next: M8 —
-interview engine (text).
+`MILESTONE6_REPORT.md`); M7 done (see `MILESTONE7_REPORT.md`); M8 done (see
+`MILESTONE8_REPORT.md`). Next: M9 — voice.
 
 ## Problem bank (Milestone 6, spec §4.9)
 
 52 hand-authored DSA problems, each validated by executing its reference
 solution in real JS/Python/C++ runtimes (`node tools/problem-pipeline/run.js`).
-Bank v1.0.0. Seed into Mongo: `MONGODB_URI=... node tools/seed-problems.js`.
-API: `GET /api/problems`. Full report: `MILESTONE6_REPORT.md`.
+Bank v1.1.0 (M8 added precomputed hint ladders for all 52 problems — spec
+§4.6; solutions/tests unchanged from the 1.0.0 validation). Seed into Mongo:
+`MONGODB_URI=... node tools/seed-problems.js`. API: `GET /api/problems`.
+Full report: `MILESTONE6_REPORT.md`.
 
 ## Research crawler (Milestone 7, spec §4.3)
 
@@ -304,6 +306,27 @@ refuses mock output — without keys the route returns extracted pages only.
 Pre-crawl seeding: `MONGODB_URI=... GEMINI_API_KEY=... node
 tools/seed-research.js --companies "Nokia,Google" [--role "..."]`.
 Full report: `MILESTONE7_REPORT.md`; decisions: `docs/decisions/008-research-crawler.md`.
+
+## Interview engine (Milestone 8, spec §§4.4–4.6)
+
+Text interview loop wired end to end: `POST /api/interview/start`
+`{intakeToken}` → research (M7) + one `planner` gateway call → round plan in
+the ADR-002 order (intro → resume → DSA → CS fundamentals → behavioral →
+closing) with deterministic, gap-aware DSA problem selection (no LLM needed
+to pick slugs). `POST /api/interview/turn {sessionToken, text}` → next
+interviewer message (exactly 1 LLM call/turn; context windowed: last 10 turns
+verbatim + ≤30 older condensed). Guest sessions in Mongo (30-day TTL,
+in-memory fallback — survive a server restart); the frontend keeps the token
+in `localStorage` and resumes via `GET /api/interview/state`. DSA rounds use
+the **real** `approach_judge`: `POST /api/interview/approach` judges the
+candidate's approach and drives the M4 editor lock (precomputed hint ladders,
+≤3; judge error or 3rd hint → unlock anyway — never hard-locks). Code runs in
+the M4/M5 in-browser runners; results post back via
+`POST /api/interview/dsa-result` and the interviewer reacts. The session
+records everything M10 needs (full transcript, per-round assessments, code
+results, timing). Errors: 400 malformed, 404 unknown, 409 bad transition,
+502 planner, 503 interviewer. Full report: `MILESTONE8_REPORT.md`; decisions:
+`docs/decisions/009-interview-engine.md`.
 
 ## Security / privacy notes (M1)
 

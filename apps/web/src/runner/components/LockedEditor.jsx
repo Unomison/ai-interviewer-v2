@@ -22,6 +22,9 @@ export default function LockedEditor({
   locked = true,
   onUnlockRequest,
   height = '320px',
+  /** M8: the interview view drives unlocking via the real approach judge and
+   *  hides this demo shortcut. The playground keeps it (default true). */
+  demoToggle = true,
 }) {
   const [demoUnlocked, setDemoUnlocked] = useState(false);
   const effectiveLocked = locked && !demoUnlocked;
@@ -64,7 +67,7 @@ export default function LockedEditor({
         <p className="text-xs text-slate-500">
           {effectiveLocked ? 'Editor is locked — explain your approach to unlock.' : 'Editor unlocked — write your solution.'}
         </p>
-        {effectiveLocked && (
+        {effectiveLocked && demoToggle && (
           <button
             type="button"
             onClick={() => {

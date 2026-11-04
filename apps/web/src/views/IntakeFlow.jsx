@@ -44,7 +44,7 @@ const inputCls =
 const primaryBtn =
   'rounded-xl bg-indigo-600 px-6 py-3 text-base font-semibold text-white shadow hover:bg-indigo-700 disabled:opacity-50';
 
-export default function IntakeFlow({ onBack }) {
+export default function IntakeFlow({ onBack, onStartInterview }) {
   const [step, setStep] = useState('consent');
   const [token, setToken] = useState(() => localStorage.getItem(TOKEN_KEY));
   const [busy, setBusy] = useState(false);
@@ -281,6 +281,14 @@ export default function IntakeFlow({ onBack }) {
           </div>
           <ErrorBox error={error} />
           <AtsReport report={report} />
+          <div className="mx-auto mt-6 max-w-3xl text-center">
+            <button onClick={onStartInterview} className={primaryBtn}>
+              🎙️ Start my mock interview →
+            </button>
+            <p className="mt-2 text-xs text-slate-400">
+              Text interview: intro → resume → DSA coding → CS fundamentals → behavioral → closing.
+            </p>
+          </div>
         </div>
       )}
     </div>
