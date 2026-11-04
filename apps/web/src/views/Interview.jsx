@@ -2,10 +2,14 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   startInterview,
   interviewTurn,
+  interviewTurnStream,
   getInterviewState,
   submitApproach,
   submitDsaResult,
 } from '../api.js';
+import { useVoiceInterview } from '../voice/useVoiceInterview.js';
+import { MicButton, MicNote, VoiceToggles } from '../voice/VoiceControls.jsx';
+import { splitSentences, stripUnspeakable } from '../voice/speech.js';
 import LockedEditor from '../runner/components/LockedEditor.jsx';
 import TestRunner from '../runner/components/TestRunner.jsx';
 import { firstVisibleFailure } from '../runner/harness.js';
@@ -58,13 +62,37 @@ export default function Interview({ onBack }) {
   const bottomRef = useRef(null);
   const warmedCpp = useRef(false);
   const activeSlugRef = useRef(null);
+  const idRef = useRef(0);
+  const nextId = () => `m-${(idRef.current += 1)}`;
+
+  // Refs so the voice hook's stable callbacks always see fresh values.
+  const sessionTokenRef = useRef(null);
+  const sendingRef = useRef(false);
+  const istateRef = useRef(null);
+  const voiceRef = useRef(null);
+  const sendStreamTextRef = useRef(null);
+  sessionTokenRef.current = sessionToken;
+  sendingRef.current = sending;
+  istateRef.current = istate;
+
+  // ---- voice (Milestone 9) ---------------------------------------------------
+  // Voice is a transport layer over the M8 text engine: speech in → text →
+  // the same turn loop → streamed text out → speech out. Every voice turn is
+  // recorded in the server transcript as text (report-ready for M10).
+  const voice = useVoiceInterview({
+    onSendText: (t) => sendStreamTextRef.current && sendStreamTextRef.current(t),
+    onReviewText: (t) => setInput(t), // "review transcript before sending"
+    getVocabularyHint: () =>
+      [istateRef.current?.role, istateRef.current?.company].filter(Boolean).join(' '),
+  });
+  voiceRef.current = voice;
 
   const applyState = useCallback((state) => {
     setIstate(state);
     setMessages(
       (state.transcript || [])
         .filter((t) => t.role !== 'system')
-        .map((t) => ({ role: t.role, text: t.text })),
+        .map((t, i) => ({ id: `t-${i}`, role: t.role, text: t.text })),
     );
     const ap = state.activeProblem;
     if (ap && ap.slug !== activeSlugRef.current) {
@@ -140,29 +168,120 @@ export default function Interview({ onBack }) {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const send = async () => {
-    const text = input.trim();
-    if (!text || sending || !sessionToken) return;
+  /**
+   * Unified turn sender (Milestone 9): streams the interviewer reply via SSE,
+   * displays it progressively, and speaks it sentence-by-sentence as it
+   * arrives (spec §4.7). Falls back to the non-streaming endpoint when the
+   * stream cannot be established at all.
+   */
+  const doSendStreamText = async (text) => {
+    const trimmed = (text || '').trim();
+    const token = sessionTokenRef.current;
+    if (!trimmed || sendingRef.current || !token) return;
     setSending(true);
-    setInput('');
-    setMessages((m) => [...m, { role: 'candidate', text }]);
-    try {
-      const data = await interviewTurn(sessionToken, text);
-      const next = [{ role: 'interviewer', text: data.message }];
-      if (data.openingMessage) next.push({ role: 'interviewer', text: data.openingMessage });
-      setMessages((m) => [...m, ...next]);
-      if (data.state) {
-        applyState(data.state);
-        if (data.state.done) localStorage.removeItem(INTERVIEW_TOKEN_KEY);
+    const v = voiceRef.current;
+    if (v) v.stopSpeaking(); // never talk over the candidate's new message
+    const candId = nextId();
+    const streamId = nextId();
+    setMessages((m) => [...m, { id: candId, role: 'candidate', text: trimmed }]);
+    setMessages((m) => [...m, { id: streamId, role: 'interviewer', text: '', streaming: true }]);
+
+    let acc = '';
+    let gotChunk = false;
+    let ttsSentences = 0; // sentences already handed to the TTS queue
+    const feedTts = (isFinal) => {
+      const vv = voiceRef.current;
+      if (!vv) return;
+      const sentences = splitSentences(stripUnspeakable(acc));
+      // Speak all complete sentences; the last one may still be growing
+      // mid-stream, so hold it back until the stream finishes.
+      const end = isFinal ? sentences.length : Math.max(sentences.length - 1, ttsSentences);
+      for (let i = ttsSentences; i < end; i += 1) {
+        if (vv.speakSentence(sentences[i])) ttsSentences += 1;
+        else break; // muted mid-stream — stop feeding
       }
+    };
+    const finishWith = (items, state) => {
+      setMessages((m) => [...m.filter((msg) => msg.id !== streamId), ...items]);
+      if (state) {
+        applyState(state);
+        if (state.done) {
+          localStorage.removeItem(INTERVIEW_TOKEN_KEY);
+          sessionTokenRef.current = null;
+          setSessionToken(null);
+        }
+      }
+    };
+
+    try {
+      const done = await interviewTurnStream(token, trimmed, {
+        onChunk: (delta) => {
+          gotChunk = true;
+          acc += delta;
+          setMessages((m) =>
+            m.map((msg) => (msg.id === streamId ? { ...msg, text: acc } : msg)),
+          );
+          feedTts(false);
+        },
+      });
+      feedTts(true);
+      if (done.openingMessage && v) v.speakText(done.openingMessage);
+      const next = [{ id: nextId(), role: 'interviewer', text: done.message }];
+      if (done.openingMessage) {
+        next.push({ id: nextId(), role: 'interviewer', text: done.openingMessage });
+      }
+      finishWith(next, done.state);
     } catch (e) {
-      setMessages((m) => [
-        ...m,
-        { role: 'interviewer', text: `⚠️ ${e.message || 'Something went wrong. Please try again.'}` },
-      ]);
+      if (!gotChunk) {
+        // Connection-level failure (SSE blocked/unreachable): fall back to
+        // the plain endpoint. No turn was recorded yet, so this is safe.
+        try {
+          const data = await interviewTurn(token, trimmed);
+          if (v) v.speakText(data.message);
+          const next = [{ id: nextId(), role: 'interviewer', text: data.message }];
+          if (data.openingMessage) {
+            next.push({ id: nextId(), role: 'interviewer', text: data.openingMessage });
+          }
+          finishWith(next, data.state);
+        } catch (e2) {
+          finishWith(
+            [
+              {
+                id: nextId(),
+                role: 'interviewer',
+                text: `⚠️ ${e2.message || 'Something went wrong. Please try again.'}`,
+              },
+            ],
+            null,
+          );
+        }
+      } else {
+        // Mid-stream failure: the candidate turn is already stored
+        // server-side — do NOT auto-retry (that would duplicate it).
+        finishWith(
+          [
+            {
+              id: nextId(),
+              role: 'interviewer',
+              text: '⚠️ The reply was interrupted. Please send your message again.',
+            },
+          ],
+          null,
+        );
+      }
     } finally {
       setSending(false);
+      const vv = voiceRef.current;
+      if (vv) vv.markSent();
     }
+  };
+  sendStreamTextRef.current = doSendStreamText;
+
+  const send = () => {
+    const t = input.trim();
+    if (!t) return;
+    setInput('');
+    doSendStreamText(t);
   };
 
   const sendApproach = async () => {
@@ -201,7 +320,7 @@ export default function Interview({ onBack }) {
         { ...lastResults, firstFailure },
       );
       if (data.message) {
-        setMessages((m) => [...m, { role: 'interviewer', text: data.message }]);
+        setMessages((m) => [...m, { role: 'interviewer', text: data.message, id: nextId() }]);
       }
       if (data.state) applyState(data.state);
       setLastResults(null);
@@ -253,6 +372,12 @@ export default function Interview({ onBack }) {
             {istate?.company ? `${istate.company} · ` : ''}{istate?.role || ''}
           </span>
         </div>
+        <div className="mx-auto flex max-w-4xl items-center justify-between px-4 pb-2">
+          <VoiceToggles voice={voice} />
+          <span className="text-xs text-slate-400">
+            {voice.sttMode === 'browser' ? '🎙️ browser transcription' : voice.sttMode === 'server' ? '🎙️ server transcription' : ''}
+          </span>
+        </div>
         <div className="mx-auto flex max-w-4xl gap-1 overflow-x-auto px-4 pb-3">
           {ROUND_ORDER.map((r, i) => (
             <div
@@ -272,22 +397,42 @@ export default function Interview({ onBack }) {
       </header>
 
       <main className="mx-auto max-w-4xl px-4 pb-40 pt-6">
-        <div className="space-y-4">
-          {messages.map((m, i) => (
-            <div key={i} className={`flex ${m.role === 'candidate' ? 'justify-end' : 'justify-start'}`}>
-              <div
-                className={`max-w-[80%] whitespace-pre-wrap rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm ${
-                  m.role === 'candidate'
-                    ? 'bg-indigo-600 text-white'
-                    : 'border border-slate-200 bg-white text-slate-800'
-                }`}
-              >
-                {m.text}
+        {voice.prefs.transcriptVisible ? (
+          <div className="space-y-4">
+            {messages.map((m) => (
+              <div key={m.id} className={`flex ${m.role === 'candidate' ? 'justify-end' : 'justify-start'}`}>
+                <div
+                  className={`max-w-[80%] whitespace-pre-wrap rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm ${
+                    m.role === 'candidate'
+                      ? 'bg-indigo-600 text-white'
+                      : 'border border-slate-200 bg-white text-slate-800'
+                  }`}
+                >
+                  {m.text}
+                  {m.streaming && <span className="animate-pulse" aria-hidden="true">▍</span>}
+                </div>
+                {m.role === 'interviewer' && !voice.prefs.audioOn && m.text && !m.streaming && (
+                  <button
+                    onClick={() => voice.speakText(m.text, { force: true })}
+                    title="Replay this message aloud"
+                    aria-label="Replay message aloud"
+                    className="ml-1 self-end rounded-lg px-1.5 py-1 text-xs text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                  >
+                    🔊
+                  </button>
+                )}
               </div>
-            </div>
-          ))}
-          <div ref={bottomRef} />
-        </div>
+            ))}
+            <div ref={bottomRef} />
+          </div>
+        ) : (
+          <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center">
+            <p className="text-sm font-medium text-slate-500">👁‍🗨 Transcript hidden</p>
+            <p className="mt-1 text-xs text-slate-400">
+              Hiding is display-only — every turn is still recorded for your interview report.
+            </p>
+          </div>
+        )}
 
         {istate?.done ? (
           <div className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-6 text-center">
@@ -322,7 +467,9 @@ export default function Interview({ onBack }) {
 
       {!istate?.done && (
         <footer className="fixed inset-x-0 bottom-0 border-t border-slate-200 bg-white/95 backdrop-blur">
-          <div className="mx-auto flex max-w-4xl gap-2 px-4 py-3">
+          <MicNote voice={voice} onDismiss={voice.dismissNote} />
+          <div className="mx-auto flex max-w-4xl items-center gap-2 px-4 py-3">
+            <MicButton voice={voice} disabled={sending} />
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
@@ -442,7 +589,7 @@ function DsaPanel(props) {
             disabled={!lastResults || submitting}
             title={!lastResults ? 'Run the tests first, then submit' : 'Submit your solution to the interviewer'}
             className="rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
-          >
+            >
             {submitting ? 'Submitting…' : '✓ Submit solution'}
           </button>
         </div>

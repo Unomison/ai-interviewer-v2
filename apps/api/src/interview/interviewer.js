@@ -96,15 +96,11 @@ function dsaContext(session, extraContext) {
 }
 
 /**
- * Generate the interviewer's next turn.
- *
- * @param {object} session        the interview session doc
- * @param {string|null} candidateText  the candidate's latest message (null = open the round)
- * @param {string} extraContext  extra DSA/submission context for this turn
+ * Build the interviewer prompt (pure — shared by the JSON and streaming paths).
  */
-export async function generateTurn({ session, candidateText = null, extraContext = '' }, gw = gateway) {
+export function buildTurnPrompt({ session, candidateText = null, extraContext = '' }) {
   const contextBlock = buildTurnContext(session.transcript);
-  const prompt =
+  return (
     `${PERSONA}\n\n${DATA_GUARD}\n\n` +
     `Interview plan: ${(session.plan || []).map((r) => r.type).join(' → ')}.\n` +
     `${roundContext(session)}\n` +
@@ -116,7 +112,101 @@ export async function generateTurn({ session, candidateText = null, extraContext
     `</data>\n\n` +
     `Respond with your next interviewer message as JSON. ` +
     `Set endRound=true only when this round has served its purpose (include a roundAssessment then). ` +
-    `In the closing round, endRound=true finishes the interview with a warm sign-off.`;
+    `In the closing round, endRound=true finishes the interview with a warm sign-off.`
+  );
+}
+
+/**
+ * Extract the speakable/displayable message text from PARTIAL model output.
+ *
+ * The model streams JSON (`{"message": "...", ...}`). This walks the raw
+ * text, finds the "message" string value, and decodes as many complete
+ * characters as are available — handling \" \\ \n \uXXXX escapes — WITHOUT
+ * ever JSON.parse-ing partial text (which would throw mid-stream).
+ *
+ * @param {string} raw        accumulated raw model output so far
+ * @param {number} alreadySent characters already emitted to the caller
+ * @returns {string} the NEWLY available message text ('' when none yet)
+ */
+export function extractMessageDelta(raw, alreadySent = 0) {
+  const m = /"message"\s*:\s*"/.exec(raw || '');
+  if (!m) return '';
+  let i = m.index + m[0].length;
+  let out = '';
+  while (i < raw.length) {
+    const ch = raw[i];
+    if (ch === '"') break; // closing quote (or end of available text)
+    if (ch === '\\' && i + 1 < raw.length) {
+      const esc = raw[i + 1];
+      if (esc === 'n') { out += '\n'; i += 2; continue; }
+      if (esc === 't') { out += '\t'; i += 2; continue; }
+      if (esc === 'r') { out += '\r'; i += 2; continue; }
+      if (esc === 'u' && /^[0-9a-fA-F]{4}/.test(raw.slice(i + 2, i + 6))) {
+        out += String.fromCharCode(parseInt(raw.slice(i + 2, i + 6), 16));
+        i += 6;
+        continue;
+      }
+      out += esc; // \" \\ \/
+      i += 2;
+      continue;
+    }
+    if (ch === '\\') break; // escape sequence cut off mid-stream: wait for more
+    out += ch;
+    i += 1;
+  }
+  return out.slice(alreadySent);
+}
+
+/** Parse + validate the COMPLETE streamed output (same contract as generate()). */
+function parseStreamedTurn(text) {
+  const t = (text || '').trim();
+  let value;
+  try {
+    value = JSON.parse(t);
+  } catch {
+    const m = t.match(/(\{[\s\S]*\})/);
+    if (!m) throw new Error('interviewer stream was not valid JSON');
+    value = JSON.parse(m[1]);
+  }
+  const v = turnOutputSchema.safeParse(value);
+  if (!v.success) throw new Error('interviewer stream failed schema validation');
+  return v.data;
+}
+
+/**
+ * Generate the interviewer's next turn.
+ *
+ * @param {object} session        the interview session doc
+ * @param {string|null} candidateText  the candidate's latest message (null = open the round)
+ * @param {string} extraContext  extra DSA/submission context for this turn
+ */
+export async function generateTurn({ session, candidateText = null, extraContext = '' }, gw = gateway) {
+  const prompt = buildTurnPrompt({ session, candidateText, extraContext });
   const { data } = await gw.generate({ task: 'interviewer', prompt, schema: turnOutputSchema });
   return data;
+}
+
+/**
+ * Milestone 9 — streaming variant of generateTurn (spec §4.7: speak the
+ * reply sentence-by-sentence WHILE the model streams).
+ *
+ * Yields `{ type: 'chunk', text }` events carrying newly-available MESSAGE
+ * text (speakable/displayable deltas, extracted by extractMessageDelta), then
+ * a final `{ type: 'final', turn }` with the schema-validated turn object.
+ * Exactly one LLM call, same as generateTurn.
+ */
+export async function* generateTurnChunks({ session, candidateText = null, extraContext = '' }, gw = gateway) {
+  const prompt = buildTurnPrompt({ session, candidateText, extraContext });
+  const { textStream } = await gw.generate({ task: 'interviewer', prompt, schema: turnOutputSchema, stream: true });
+  let raw = '';
+  let sent = 0;
+  for await (const piece of textStream) {
+    raw += piece;
+    const delta = extractMessageDelta(raw, sent);
+    if (delta) {
+      sent += delta.length;
+      yield { type: 'chunk', text: delta };
+    }
+  }
+  yield { type: 'final', turn: parseStreamedTurn(raw) };
 }

@@ -72,6 +72,81 @@ router.post('/interview/turn', async (req, res, next) => {
   }
 });
 
+/**
+ * Milestone 9 — POST /api/interview/turn/stream (Server-Sent Events).
+ *
+ * Same contract as /turn, but the interviewer reply streams as:
+ *   event: chunk  data: {"text": "..."}        (speakable message deltas)
+ *   event: done   data: {ok, message, openingMessage, currentRound,
+ *                        transitionedTo, done, state}
+ *   event: error  data: {ok:false, error, message}
+ * A heartbeat comment every 15 s keeps free-tier proxies from idling the
+ * connection. Post-processing is identical to /turn (see takeTurnStream).
+ */
+const STREAM_HEARTBEAT_MS = 15000;
+
+router.post('/interview/turn/stream', async (req, res, next) => {
+  try {
+    const parsed = turnRequestSchema.safeParse(req.body);
+    if (!parsed.success) return badInput(res, parsed.error);
+
+    res.writeHead(200, {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache, no-transform',
+      Connection: 'keep-alive',
+      'X-Accel-Buffering': 'no', // don't let proxies buffer the stream
+    });
+    if (typeof res.flushHeaders === 'function') res.flushHeaders();
+
+    const send = (event, data) => {
+      try {
+        res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+      } catch {
+        /* client went away */
+      }
+    };
+    const heartbeat = setInterval(() => {
+      try {
+        res.write(': heartbeat\n\n');
+      } catch {
+        /* client went away */
+      }
+    }, STREAM_HEARTBEAT_MS);
+    // Don't let the heartbeat hold the process open after the response ends.
+    if (typeof heartbeat.unref === 'function') heartbeat.unref();
+    req.on('close', () => clearInterval(heartbeat));
+
+    try {
+      for await (const ev of interview.takeTurnStream(parsed.data)) {
+        if (ev.type === 'chunk') send('chunk', { text: ev.text });
+        else if (ev.type === 'done') {
+          send('done', {
+            ok: true,
+            message: ev.message,
+            openingMessage: ev.openingMessage,
+            currentRound: ev.currentRound,
+            transitionedTo: ev.transitionedTo,
+            done: ev.done,
+            state: ev.state,
+          });
+        } else if (ev.type === 'error') {
+          send('error', { ok: false, error: ev.error, message: ev.message });
+        }
+      }
+    } catch (err) {
+      send('error', {
+        ok: false,
+        error: 'interviewer_unavailable',
+        message: `The interviewer is unavailable right now: ${err.message || err}`,
+      });
+    }
+    clearInterval(heartbeat);
+    res.end();
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.get('/interview/state', async (req, res, next) => {
   try {
     const parsed = stateRequestSchema.safeParse(req.query);

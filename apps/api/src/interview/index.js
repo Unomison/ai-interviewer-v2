@@ -16,7 +16,7 @@ import { getSession as getIntakeSession } from '../intake/store.js';
 import { researchCompany } from '../research/index.js';
 import { getFullProblem, toClientSafeDsaProblem } from '../problems/index.js';
 import { planInterview } from './planner.js';
-import { generateTurn } from './interviewer.js';
+import { generateTurn, generateTurnChunks } from './interviewer.js';
 import { judgeApproach } from './judge.js';
 import { nextRound, checkTransition, applyJudgeVerdict, scoreDsaProblem, MAX_HINTS } from './machine.js';
 import * as store from './store.js';
@@ -255,6 +255,83 @@ export async function takeTurn({ sessionToken, text }, deps = {}) {
   return {
     ok: true,
     message: turn.message,
+    openingMessage,
+    currentRound: session.currentRound,
+    transitionedTo: applied.transitionedTo,
+    done: session.status === 'done',
+    state: await clientState(session),
+  };
+}
+
+/**
+ * Milestone 9 — streaming variant of takeTurn (spec §4.7).
+ *
+ * An async generator yielding:
+ *   { type: 'chunk', text }          — newly-available interviewer message text
+ *   { type: 'done', message, openingMessage, currentRound, transitionedTo, done, state }
+ *   { type: 'error', error, message }
+ *
+ * Post-processing (transcript append, round flags, transition + opening) is
+ * IDENTICAL to takeTurn, so streamed and non-streamed turns leave the exact
+ * same session behind — voice turns are report-ready for M10.
+ */
+export async function* takeTurnStream({ sessionToken, text }, deps = {}) {
+  const gw = gwOf(deps);
+  if (!sessionToken || typeof text !== 'string' || text.trim().length === 0) {
+    yield { type: 'error', error: 'invalid_request', message: 'sessionToken and non-empty text are required.' };
+    return;
+  }
+  let session = await store.getSession(sessionToken);
+  if (!session) {
+    yield { type: 'error', error: 'session_not_found', message: 'Interview session not found.' };
+    return;
+  }
+  if (session.status === 'done') {
+    yield { type: 'error', error: 'interview_complete', message: 'This interview is already complete.' };
+    return;
+  }
+
+  await store.appendTurn(sessionToken, 'candidate', text.trim(), session.currentRound);
+  session = await store.getSession(sessionToken);
+
+  let finalTurn;
+  try {
+    for await (const ev of generateTurnChunks({ session, candidateText: text.trim() }, gw)) {
+      if (ev.type === 'chunk') yield { type: 'chunk', text: ev.text };
+      else finalTurn = ev.turn;
+    }
+  } catch (err) {
+    yield {
+      type: 'error',
+      error: 'interviewer_unavailable',
+      message: `The interviewer is unavailable right now: ${err.message}`,
+    };
+    return;
+  }
+  await store.appendTurn(sessionToken, 'interviewer', finalTurn.message, session.currentRound);
+
+  const applied = await applyTurnFlags(sessionToken, finalTurn);
+  if (!applied.ok) {
+    yield { type: 'error', error: applied.error, message: applied.message };
+    return;
+  }
+  session = applied.session;
+
+  let openingMessage = null;
+  if (applied.transitionedTo && applied.transitionedTo !== 'done') {
+    try {
+      const opening = await generateTurn({ session, candidateText: null }, gw);
+      await store.appendTurn(sessionToken, 'interviewer', opening.message, session.currentRound);
+      openingMessage = opening.message;
+      session = await store.getSession(sessionToken);
+    } catch {
+      // Non-fatal: the round transition itself is persisted; the next turn opens it.
+    }
+  }
+
+  yield {
+    type: 'done',
+    message: finalTurn.message,
     openingMessage,
     currentRound: session.currentRound,
     transitionedTo: applied.transitionedTo,

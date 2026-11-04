@@ -133,3 +133,83 @@ export function submitDsaResult(sessionToken, problemSlug, language, code, resul
     timeoutMs: 120000,
   });
 }
+
+/* --- Milestone 9: voice ----------------------------------------------------- */
+
+export function transcribeAudio(blob, vocabularyHint = '') {
+  const form = new FormData();
+  form.append('audio', blob, 'audio.webm');
+  if (vocabularyHint) form.append('vocabularyHint', vocabularyHint);
+  return request('/api/voice/transcribe', { method: 'POST', body: form, timeoutMs: 90000 });
+}
+
+export function voiceStatus() {
+  return request('/api/voice/status', { timeoutMs: 8000 });
+}
+
+/**
+ * Streaming interview turn over SSE (POST /api/interview/turn/stream).
+ * onChunk receives speakable message-text deltas as they arrive; resolves
+ * with the `done` payload ({ ok, message, openingMessage, currentRound,
+ * transitionedTo, done, state }). Throws a coded Error on stream errors.
+ */
+export async function interviewTurnStream(sessionToken, text, { onChunk, signal } = {}) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 180000);
+  const forwardAbort = () => controller.abort();
+  if (signal) signal.addEventListener('abort', forwardAbort, { once: true });
+  try {
+    const res = await fetch(`${API_BASE}/api/interview/turn/stream`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sessionToken, text }),
+      signal: controller.signal,
+    });
+    if (!res.ok || !res.body) {
+      const data = await res.json().catch(() => ({}));
+      const err = new Error(data.message || `Request failed (HTTP ${res.status})`);
+      err.code = data.error;
+      err.status = res.status;
+      throw err;
+    }
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buf = '';
+    let donePayload = null;
+    const handleEvent = (raw) => {
+      const lines = raw.split('\n');
+      const event = (lines.find((l) => l.startsWith('event:')) || '').slice(6).trim();
+      const data = lines
+        .filter((l) => l.startsWith('data:'))
+        .map((l) => l.slice(5).trim())
+        .join('\n');
+      if (!event || !data) return; // heartbeat comment or keep-alive padding
+      const parsed = JSON.parse(data);
+      if (event === 'chunk') {
+        if (onChunk && parsed.text) onChunk(parsed.text);
+      } else if (event === 'done') {
+        donePayload = parsed;
+      } else if (event === 'error') {
+        const err = new Error(parsed.message || parsed.error || 'Stream failed');
+        err.code = parsed.error;
+        throw err;
+      }
+    };
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += decoder.decode(value, { stream: true });
+      let idx;
+      while ((idx = buf.indexOf('\n\n')) >= 0) {
+        const raw = buf.slice(0, idx);
+        buf = buf.slice(idx + 2);
+        if (raw.trim()) handleEvent(raw);
+      }
+    }
+    if (!donePayload) throw new Error('The reply stream ended before finishing.');
+    return donePayload;
+  } finally {
+    clearTimeout(timer);
+    if (signal) signal.removeEventListener('abort', forwardAbort);
+  }
+}

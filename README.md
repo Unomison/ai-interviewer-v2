@@ -279,7 +279,7 @@ Per spec Section 13. M1 done (see `MILESTONE1_REPORT.md`); M2 done (see
 `MILESTONE2_REPORT.md`); M3 done (see `MILESTONE3_REPORT.md`); M4 done (see
 `MILESTONE4_REPORT.md`); M5 done (see `MILESTONE5_REPORT.md`); M6 done (see
 `MILESTONE6_REPORT.md`); M7 done (see `MILESTONE7_REPORT.md`); M8 done (see
-`MILESTONE8_REPORT.md`). Next: M9 — voice.
+`MILESTONE8_REPORT.md`); M9 done (see `MILESTONE9_REPORT.md`). Next: M10 — report, sharing, JIT problems.
 
 ## Problem bank (Milestone 6, spec §4.9)
 
@@ -327,6 +327,35 @@ records everything M10 needs (full transcript, per-round assessments, code
 results, timing). Errors: 400 malformed, 404 unknown, 409 bad transition,
 502 planner, 503 interviewer. Full report: `MILESTONE8_REPORT.md`; decisions:
 `docs/decisions/009-interview-engine.md`.
+
+## Voice interview (Milestone 9, spec §4.7)
+
+Voice is a transport layer over the M8 text engine: speech in → text → the
+same turn loop → streamed text out → speech out. Every voice turn is stored
+in the transcript as text (report-ready for M10).
+
+- STT primary: `POST /api/voice/transcribe` (multipart `audio`, 10 MB cap)
+  proxies to Groq Whisper `whisper-large-v3-turbo` with the server-side
+  `GROQ_API_KEY`; vocabulary hint passed as Whisper's `prompt`. 400 on
+  bad audio; 502/503 with honest JSON when Groq is unreachable or the key
+  is absent. Fallback: browser Web Speech API live capture (labelled
+  "using browser transcription"); text input always exists.
+- TTS: browser `speechSynthesis`, sentence-by-sentence over
+  `POST /api/interview/turn/stream` (SSE — `chunk`/`done`/`error` events,
+  15 s heartbeat). Code blocks are never spoken (`stripUnspeakable`);
+  natural-English voice preferred, never breaks.
+- Mic: tap = record, tap again = stop/transcribe/send — recording never
+  starts by itself. Timer + level meter, cancel control, 0.5 s min / 3 min
+  max, permission-denied guidance. Tapping the mic stops in-flight TTS.
+- Toggles (persisted, usable mid-interview): audio on/off, transcript
+  show/hide (UI-only — always recorded), mic on/off, review-before-send.
+  Replay button per interviewer message when audio is off.
+- DSA rounds: voice works for dialogue; code stays typed (no voice coding).
+- "Optional HD voice" (Kokoro) deferred — see ADR 010 §9.
+
+The true mic/browser E2E can't run on a build machine — a 5-step manual
+script is in `MILESTONE9_REPORT.md`. Full report: `MILESTONE9_REPORT.md`;
+decisions: `docs/decisions/010-voice-interview.md`.
 
 ## Security / privacy notes (M1)
 
