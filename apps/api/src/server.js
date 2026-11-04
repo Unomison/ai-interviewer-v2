@@ -16,6 +16,8 @@ import helmet from 'helmet';
 
 import { connectDb } from './db.js';
 import healthRouter from './routes/health.js';
+import intakeRouter, { intakeErrorHandler } from './routes/intake.js';
+import sampleRouter from './routes/sample.js';
 
 dotenv.config();
 
@@ -46,6 +48,11 @@ app.use(cors({ origin: CORS_ORIGIN, credentials: true }));
 app.use(express.json({ limit: '1mb' }));
 
 app.use('/api', healthRouter);
+app.use('/api', intakeRouter);
+app.use('/api', sampleRouter);
+
+// IntakeError (friendly 4xx) → JSON before the generic 404.
+app.use('/api', intakeErrorHandler);
 
 // 404 for unknown API routes (JSON, not an HTML stack trace).
 app.use('/api', (_req, res) => res.status(404).json({ error: 'not_found' }));

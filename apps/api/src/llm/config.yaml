@@ -1,0 +1,107 @@
+# ============================================================
+# AI Interviewer — LLM gateway configuration (Milestone 2)
+# Spec Section 8: provider chain per task, failover, quotas.
+#
+# Everything tunable lives here, not in code. Model names and free-tier
+# limits change often — re-verify against provider docs and update the
+# "verified" dates below (see docs/free-tier-facts.md).
+# ============================================================
+
+# --- Per-task provider chains (tried in order; first success wins) ---
+# Tasks map to spec Section 8: parse, ats_rubric, planner, interviewer,
+# approach_judge, report. `embed` serves gateway.embed(texts).
+# A provider is skipped when its key is missing, when it is in cool-down,
+# or when it has hit its configured daily limit.
+tasks:
+  parse:
+    chain: [gemini, groq, openrouter]
+    # Resume/JD parsing: cheap extraction, quality matters less than cost.
+  ats_rubric:
+    chain: [gemini, groq, openrouter]
+  planner:
+    chain: [gemini, groq, openrouter]
+    # Planner gets the strongest models (per-task model override below).
+  interviewer:
+    chain: [groq, gemini, openrouter]
+    # Interviewer turns are high-volume and latency-sensitive: Groq first
+    # (fastest inference), Gemini as backup.
+  approach_judge:
+    chain: [gemini, groq, openrouter]
+  report:
+    chain: [gemini, groq, openrouter]
+  embed:
+    chain: [gemini]
+    # One hosted embedding model everywhere (spec Section 4.9).
+
+# --- Providers ---
+providers:
+  gemini:
+    keyEnv: GEMINI_API_KEY
+    # Override for tests: GEMINI_BASE_URL (default below).
+    baseUrl: "https://generativelanguage.googleapis.com"
+    model: "gemini-2.0-flash"          # free tier: ~1,500 req/day, 15 rpm (verified 2026-11-03)
+    embeddingModel: "gemini-embedding-001"  # text-embedding-004 was retired 2026-06; verified 2026-11-03
+    embeddingDimensions: 768
+    supportsStreaming: true
+    limits:
+      requestsPerDay: 1400   # stay just under the free-tier ceiling
+      tokensPerDay: 900000
+
+  groq:
+    keyEnv: GROQ_API_KEY
+    baseUrl: "https://api.groq.com/openai/v1"   # OpenAI-compatible
+    # Strongest free model for judgement-heavy tasks; 8b-instant for volume.
+    # Free tier (verified 2026-11-03): 70b = 1,000 req/day + 100K tokens/day;
+    # 8b-instant = 14,400 req/day + 500K tokens/day.
+    model: "llama-3.3-70b-versatile"
+    fastModel: "llama-3.1-8b-instant"
+    supportsStreaming: true
+    limits:
+      requestsPerDay: 900
+      tokensPerDay: 90000
+    taskModels:
+      interviewer: "llama-3.1-8b-instant"   # high-volume turns on the cheap model
+
+  openrouter:
+    keyEnv: OPENROUTER_API_KEY   # optional; chain simply skips it when absent
+    baseUrl: "https://openrouter.ai/api/v1"     # OpenAI-compatible
+    model: "meta-llama/llama-3.3-70b-instruct:free"
+    supportsStreaming: true
+    limits:
+      requestsPerDay: 200   # free-model shared allowance is modest; verify
+      tokensPerDay: 100000
+
+  ollama:
+    # DEV ONLY — never in the visitor's path (spec Section 0.3).
+    # Used only when OLLAMA_ENABLED=true AND OLLAMA_BASE_URL is set.
+    enabledEnv: OLLAMA_ENABLED
+    baseUrl: "http://localhost:11434"
+    model: "llama3.1:8b"
+    supportsStreaming: false   # single-chunk passthrough in M2; real SSE later
+    limits:
+      requestsPerDay: 1000000
+      tokensPerDay: 100000000
+
+# --- Failover / resilience ---
+resilience:
+  requestTimeoutMs: 45000
+  cooldownMs: 60000          # 503/timeout marks a provider unhealthy this long
+  backoffMs: 500             # pause after a 429 before trying the next provider
+  maxAttemptsPerProvider: 1  # +1 validation retry happens inside the attempt
+
+# --- Global budget (spec Section 2: daily global budget stops new
+# --- interviews gracefully before quotas run out) ---
+budgets:
+  maxDailyCalls: 300         # ~10 full interviews/day at ~30 calls each
+  maxDailyTokens: 2000000
+
+# --- Cache (content-hash keyed; in-memory LRU in M2, Mongo later) ---
+cache:
+  maxEntries: 200
+  enabled: true
+
+# --- Mock mode ---
+mock:
+  # Served when NO provider keys are configured at all. Deterministic, so the
+  # pipeline works end-to-end with zero keys (owner decision, ADR 002).
+  enabled: true

@@ -1,4 +1,4 @@
-# Free-tier facts relied on (Milestone 1)
+# Free-tier facts relied on (Milestones 1–2)
 
 Snapshot of the free-tier limits this milestone relies on. Every entry has a
 verification date. Anything I could not verify is marked **UNVERIFIED** — treat
@@ -18,7 +18,14 @@ launch, and update the date when you do.
 | MongoDB Atlas M0 — vector search | Atlas Vector Search supported on M0 | 2026-11-02 | Same as above |
 | MongoDB Atlas M0 — card/pausing | No credit card; auto-pauses after 30 days of zero connections | 2026-11-02 | Same as above |
 | GitHub Actions free for public repos | Claimed by spec §4.3/§13; limits not checked this milestone | **UNVERIFIED** | Verify before scheduling the M6 pre-crawl |
-| Gemini free tier quotas | Not needed until M2 | **UNVERIFIED** | Verify in M2 before building the LLM gateway |
+| Gemini free tier quotas | Not needed until M2 | **VERIFIED 2026-11-03** | See M2 rows below |
+| Gemini free tier — gemini-2.0-flash | ~1,500 requests/day, 15 requests/min | 2026-11-03 | Third-party guides citing Google AI Studio quotas (Oct–Nov 2026); **re-verify on ai.google.dev** before launch |
+| Gemini embeddings — use gemini-embedding-001 | text-embedding-004 retired (HTTP 404 since June 2026); embedding model is gemini-embedding-001 | 2026-11-03 | Third-party connector docs live-verified against the Gemini API (June 2026) |
+| Gemini API auth | API key via `x-goog-api-key` header (never in URL); REST `v1beta/models/{model}:generateContent`; structured output via `responseMimeType: "application/json"` + `responseSchema` | 2026-11-03 | Same as above |
+| Groq free tier — endpoint | OpenAI-compatible: `https://api.groq.com/openai/v1/chat/completions`, Bearer key | 2026-11-03 | Multiple third-party guides (Oct 2026); **re-verify on console.groq.com** before launch |
+| Groq free tier — llama-3.3-70b-versatile | 1,000 requests/day, 100K tokens/day, 30 req/min | 2026-11-03 | Same as above |
+| Groq free tier — llama-3.1-8b-instant | 14,400 requests/day, 500K tokens/day, 30 req/min | 2026-11-03 | Same as above |
+| OpenRouter free tier — endpoint | OpenAI-compatible: `https://openrouter.ai/api/v1/chat/completions`; free models carry the `:free` suffix; key optional | 2026-11-03 | Third-party guides (Oct 2026); **re-verify on openrouter.ai** before launch |
 | Groq Whisper free tier (≈20 req/min, 2000/day) | Spec's reported figure; not needed until M9 | **UNVERIFIED** | Verify before voice work |
 | Public Piston API freeness | Spec §4.8 reports it stopped being free | **UNVERIFIED** | Verify if a hosted executor is ever considered (M5) |
 

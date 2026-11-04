@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react';
 import { pingHealth, apiBase } from './api.js';
+import SampleReport from './views/SampleReport.jsx';
+import IntakeFlow from './views/IntakeFlow.jsx';
 
 /**
- * Milestone 1 landing skeleton.
+ * Milestone 1 landing skeleton + Milestone 3 intake entry points.
  *
  * - Pings GET /api/health on first load (spec Section 6): while the free
  *   backend is still waking or unreachable we show a clear
  *   "waking the interviewer" state instead of a broken page.
- * - "Try the sample interview" / "Start my own" lead to a placeholder —
- *   they must NOT fake functionality; intake arrives in Milestone 3.
+ * - "Try the sample interview" → precomputed ATS report (zero LLM calls).
+ * - "Start my own" → guest intake flow (consent → upload → JD → ATS report).
  */
 function BackendStatus({ health, error }) {
   if (health) {
@@ -30,27 +32,6 @@ function BackendStatus({ health, error }) {
     );
   }
   return null;
-}
-
-function PlaceholderNotice({ choice, onBack }) {
-  return (
-    <div className="max-w-xl mx-auto mt-16 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm text-center">
-      <p className="text-sm uppercase tracking-wide text-slate-400">Milestone 3</p>
-      <h2 className="mt-2 text-2xl font-bold text-slate-900">
-        {choice === 'sample' ? 'Sample interview' : 'Your own interview'}
-      </h2>
-      <p className="mt-3 text-slate-600">
-        This is where the interview will start. Intake, the ATS report, and the interview
-        room land in Milestones 3–10 — nothing here is faked in the meantime.
-      </p>
-      <button
-        onClick={onBack}
-        className="mt-6 rounded-lg border border-slate-300 px-5 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
-      >
-        ← Back to landing
-      </button>
-    </div>
-  );
 }
 
 export default function App() {
@@ -84,12 +65,11 @@ export default function App() {
     };
   }, []);
 
-  if (choice) {
-    return (
-      <div className="min-h-screen bg-slate-50 px-4 py-10">
-        <PlaceholderNotice choice={choice} onBack={() => setChoice(null)} />
-      </div>
-    );
+  if (choice === 'sample') {
+    return <SampleReport onBack={() => setChoice(null)} />;
+  }
+  if (choice === 'own') {
+    return <IntakeFlow onBack={() => setChoice(null)} />;
   }
 
   return (

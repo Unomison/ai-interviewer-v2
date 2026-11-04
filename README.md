@@ -122,6 +122,7 @@ says `db: "not_configured"`.
 
 ```
 apps/api/        Node/Express API skeleton (health, DB helper, graceful degradation)
+apps/api/src/llm/  LLM gateway (M2): adapters, config.yaml, failover, cache, mocks
 apps/web/        React + Vite + Tailwind landing (health ping, M3 placeholder)
 packages/schemas/  shared Zod contracts (guestSession starting example)
 tools/           Python OFFLINE tooling only (placeholder until M6/M7)
@@ -131,13 +132,88 @@ docker-compose.yml  local Mongo for dev/offline only (deployed demo uses Atlas M
 .github/workflows/ci.yml  install → test → build
 ```
 
+## LLM gateway (Milestone 2, spec §8)
+
+Every feature talks to AI providers through **one module** instead of calling
+them directly:
+
+```js
+import { gateway } from './src/llm/index.js';
+const res = await gateway.generate({ task: 'parse', prompt, schema: myZodSchema });
+// → { data, text, provider, model, usage, cached, attempts }
+// data is ALWAYS validated against your Zod schema.
+const { vectors } = await gateway.embed(['some text']);
+```
+
+**Env vars** (owner pastes real keys into the host dashboard — Render →
+Environment — never into git or chat):
+
+| Var | Purpose |
+|---|---|
+| `GEMINI_API_KEY` | Google AI Studio key (primary provider) |
+| `GROQ_API_KEY` | Groq key (fast fallback) |
+| `OPENROUTER_API_KEY` | Optional extra fallback; chain skips it when absent |
+| `OLLAMA_ENABLED` / `OLLAMA_BASE_URL` | Dev-only local model; never in the visitor's path |
+
+**`apps/api/src/llm/config.yaml`** holds the per-task provider chains
+(`parse`, `ats_rubric`, `planner`, `interviewer`, `approach_judge`,
+`report`, `embed` — default Gemini → Groq → OpenRouter), model names,
+daily request/token limits, the global budget (300 calls / 2M tokens per
+day), cool-downs and the cache size. Retune here, not in code.
+
+**How it behaves**: 429 → brief back-off, try the next provider; 503 or a
+timeout → that provider rests for 60s and is routed around; a provider that
+answers but fails Zod validation gets one retry with the error spelled out,
+then a loud error. Identical requests are served from an in-memory
+content-hash cache. When the daily budget is spent, calls stop with the
+friendly "interviewer is resting" message instead of half-running.
+
+**Mock mode**: with no keys configured at all, the gateway serves
+deterministic, schema-valid mock answers (and mock embeddings), so the whole
+pipeline runs end-to-end — local dev, CI, and demos never hard-require a key.
+Design details: `docs/decisions/003-llm-gateway-design.md`.
+
+## Guest intake + ATS (Milestone 3, spec §4.1–4.2)
+
+No login — visitors get an unguessable session token after accepting the
+consent notice. The flow: **upload resume** (PDF/DOCX, ≤2 MB, ≤3 pages,
+scanned PDFs rejected with a friendly message) → **PII redaction** (email,
+phone, links, street address stripped; name → "Candidate") → **one** LLM
+call → `resume.json` → optional **JD** (paste or upload → one LLM call →
+`jd.json`) → **ATS report**.
+
+The **hybrid ATS score** blends four parts (weights in
+`apps/api/src/intake/atsConfig.js`): keyword/skill match 40% (deterministic:
+skill alias map + Fuse.js fuzzy matching, required skills weigh double),
+semantic match 25% (embedding similarity via the gateway), structure 15%
+(deterministic: headings, extractable text, contact info, length), impact
+20% (one `ats_rubric` LLM call — the same call returns before/after rewrite
+suggestions). The report also splits missing keywords into "you appear to
+have this but did not state it" vs "genuine gap", and **never suggests
+claiming skills you don't have**. No JD → scored against a generic role
+template, clearly labelled. The report always carries the honesty note:
+*this is an estimate — real ATS products rarely expose scores.*
+
+Privacy (spec §10): consent before upload; PII redacted before any model
+call; the raw file is discarded right after parsing and never stored;
+sessions auto-delete via a MongoDB TTL index (30 days); a "delete my data"
+button (`DELETE /api/intake/session`) wipes a session on demand.
+
+**Try it without uploading anything**: "Try the sample interview" serves a
+precomputed ATS report with **zero LLM calls**
+(`GET /api/sample/ats-report`).
+
+API routes: `POST /api/intake/consent`, `POST /api/intake/resume`
+(multipart), `POST /api/intake/jd`, `POST /api/ats/report`,
+`DELETE /api/intake/session`, `GET /api/sample/ats-report`. The session
+token travels in the `x-session-token` header. Design details:
+`docs/decisions/004-resume-parsing-libraries.md`.
+
 ## Milestones
 
-Per spec Section 13. M1 done (see `MILESTONE1_REPORT.md`). Next: M2 LLM gateway
-(adapters, failover, validated structured output) — owner confirmed 2026-11-02
-he will create both the Gemini (Google AI Studio) and Groq keys; the gateway is
-designed assuming both exist in production with graceful fallback when absent.
-See `docs/decisions/002-section-15-decisions.md` for all five confirmed decisions.
+Per spec Section 13. M1 done (see `MILESTONE1_REPORT.md`); M2 done (see
+`MILESTONE2_REPORT.md`); M3 done (see `MILESTONE3_REPORT.md`). Next: M4
+in-browser runner + locked editor (Monaco, Workers, Pyodide).
 
 ## Security / privacy notes (M1)
 
