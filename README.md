@@ -123,7 +123,8 @@ says `db: "not_configured"`.
 ```
 apps/api/        Node/Express API skeleton (health, DB helper, graceful degradation)
 apps/api/src/llm/  LLM gateway (M2): adapters, config.yaml, failover, cache, mocks
-apps/web/        React + Vite + Tailwind landing (health ping, M3 placeholder)
+apps/web/        React + Vite + Tailwind: landing (health ping), intake flow,
+               ATS report UI, M4 code playground (Monaco + Workers + Pyodide)
 packages/schemas/  shared Zod contracts (guestSession starting example)
 tools/           Python OFFLINE tooling only (placeholder until M6/M7)
 tests/           real API tests via node --test (boots the server, uses HTTP)
@@ -208,6 +209,34 @@ API routes: `POST /api/intake/consent`, `POST /api/intake/resume`
 `DELETE /api/intake/session`, `GET /api/sample/ats-report`. The session
 token travels in the `x-session-token` header. Design details:
 `docs/decisions/004-resume-parsing-libraries.md`.
+
+## In-browser code runner (Milestone 4, spec §4.6, §4.8)
+
+Candidate code runs **entirely in the visitor's browser** — inside Web
+Workers with hard timeouts. There is deliberately no server-side execution
+of untrusted code (spec non-goal). JavaScript runs natively; Python runs
+through Pyodide (WebAssembly), lazy-loaded from CDN only when Python is
+picked, with a progress indicator; C++ arrives in Milestone 5.
+
+- **Locked editor**: Monaco (loaded from CDN at runtime — never bundled;
+  the production JS is ~195 KB), readOnly with the overlay "Explain your
+  approach to unlock" (spec §4.6). The LLM-judged unlock is M8; M4 has a
+  demo toggle.
+- **Test harness**: your code defines `solve(...)`; the harness calls it per
+  test with the problem's JSON args and compares canonicalised output
+  (`exact` / float tolerance / `unordered`). Per-test timeout (default
+  2 s; Python ×3 multiplier): on overrun the worker is **terminated**, the
+  test is marked TLE, and the run continues with the next test.
+- **Results panel**: per-test pass/fail, runtime, errors. Only the first
+  failing *visible* test reveals input/expected/got; hidden inputs are never
+  displayed.
+- **Playground**: 4 hand-written problems (two-sum, valid-parentheses,
+  reverse-string, contains-duplicate) in the shared problem-spec format M6
+  will reuse — linked discreetly from the landing page.
+
+Accepted trade-off (spec §4.8): tests ship to the browser, so a determined
+visitor could read hidden tests — fine for a self-practice tool. Design
+details: `docs/decisions/005-in-browser-runner.md`.
 
 ## Milestones
 

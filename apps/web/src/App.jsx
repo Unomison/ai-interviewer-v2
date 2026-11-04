@@ -2,15 +2,18 @@ import { useEffect, useState } from 'react';
 import { pingHealth, apiBase } from './api.js';
 import SampleReport from './views/SampleReport.jsx';
 import IntakeFlow from './views/IntakeFlow.jsx';
+import Playground from './runner/components/Playground.jsx';
 
 /**
- * Milestone 1 landing skeleton + Milestone 3 intake entry points.
+ * Milestone 1 landing skeleton + Milestone 3 intake entry points
+ * + Milestone 4 code playground.
  *
  * - Pings GET /api/health on first load (spec Section 6): while the free
  *   backend is still waking or unreachable we show a clear
  *   "waking the interviewer" state instead of a broken page.
  * - "Try the sample interview" → precomputed ATS report (zero LLM calls).
  * - "Start my own" → guest intake flow (consent → upload → JD → ATS report).
+ * - "Code playground" → M4 in-browser runner (Monaco + Workers + Pyodide).
  */
 function BackendStatus({ health, error }) {
   if (health) {
@@ -37,7 +40,7 @@ function BackendStatus({ health, error }) {
 export default function App() {
   const [health, setHealth] = useState(null);
   const [status, setStatus] = useState('checking'); // 'checking' | 'online' | 'waking'
-  const [choice, setChoice] = useState(null); // null | 'sample' | 'own'
+  const [choice, setChoice] = useState(null); // null | 'sample' | 'own' | 'playground'
 
   useEffect(() => {
     let cancelled = false;
@@ -70,6 +73,9 @@ export default function App() {
   }
   if (choice === 'own') {
     return <IntakeFlow onBack={() => setChoice(null)} />;
+  }
+  if (choice === 'playground') {
+    return <Playground onBack={() => setChoice(null)} />;
   }
 
   return (
@@ -109,6 +115,11 @@ export default function App() {
         </div>
         <p className="mt-4 text-xs text-slate-400">
           Sample mode uses preloaded data — no personal information needed.
+        </p>
+        <p className="mt-2 text-xs">
+          <button onClick={() => setChoice('playground')} className="font-medium text-indigo-600 hover:text-indigo-800">
+            Here for the coding round? Try the code playground →
+          </button>
         </p>
 
         <section className="mx-auto mt-16 grid max-w-4xl gap-4 text-left sm:grid-cols-3">
